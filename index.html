@@ -111,7 +111,7 @@
             "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
         };
 
-        let savedImageSrc = ""; // 暫存要顯示的獎狀
+        let savedImageSrc = "";
 
         function handleLogin() {
             const errorDiv = document.getElementById("error-message");
@@ -129,16 +129,12 @@
 
             const val = document.getElementById("username").value.trim();
             if (userData[val]) {
-                savedImageSrc = userData[val]; // 把獎狀路徑記下來
-                
-                // 隱藏登入頁，顯示小恐龍遊戲
+                savedImageSrc = userData[val];
                 document.getElementById("login-card").classList.add("hidden");
                 document.getElementById("dino-stage").classList.remove("hidden");
-                
-                // 啟動遊戲
                 initGame();
             } else {
-                errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
+                errorDiv.innerText = "❌ 認證失敗：資料庫查查無此使用者。";
             }
         }
 
@@ -150,7 +146,8 @@
         let gameSpeed = 4;
 
         function initGame() {
-            dino = { x: 30, y: 120, width: 20, height: 25, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
+            // 寬高微調以符合 Emoji 尺寸
+            dino = { x: 30, y: 115, width: 26, height: 26, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
             cacti = [];
             score = 0;
             isGameOver = false;
@@ -158,7 +155,6 @@
             document.getElementById("restart-btn").style.display = "none";
             document.getElementById("score").innerText = score;
             
-            // 監聽跳躍 (支援鍵盤與手機/iPad點擊)
             window.addEventListener("keydown", handleJump);
             canvas.addEventListener("touchstart", handleJump);
             canvas.addEventListener("mousedown", handleJump);
@@ -177,8 +173,8 @@
         }
 
         function spawnCactus() {
-            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 150 + Math.random() * 100) {
-                cacti.push({ x: canvas.width, y: 125, width: 15, height: 20 });
+            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 160 + Math.random() * 120) {
+                cacti.push({ x: canvas.width, y: 115, width: 22, height: 26 });
             }
         }
 
@@ -189,24 +185,31 @@
             
             // 地平線
             ctx.strokeStyle = "#bbb";
-            ctx.beginPath(); ctx.moveTo(0, 145); ctx.lineTo(canvas.width, 145); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, 142); ctx.lineTo(canvas.width, 142); ctx.stroke();
             
-            // 更新與繪製小恐龍
+            // 更新小恐龍物理位置
             dino.vy += dino.gravity;
             dino.y += dino.vy;
-            if (dino.y >= 120) { dino.y = 120; dino.vy = 0; dino.isGrounded = true; }
-            ctx.fillStyle = "#555";
-            ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+            if (dino.y >= 115) { dino.y = 115; dino.vy = 0; dino.isGrounded = true; }
             
-            // 處理仙人掌
+            // 【畫小恐龍 🦖】
+            ctx.font = "26px sans-serif";
+            ctx.textBaseline = "top";
+            ctx.fillText("🦖", dino.x, dino.y);
+            
+            // 處理障礙物
             spawnCactus();
             for (let i = cacti.length - 1; i >= 0; i--) {
                 cacti[i].x -= gameSpeed;
-                ctx.fillStyle = "#228b22";
-                ctx.fillRect(cacti[i].x, cacti[i].y, cacti[i].width, cacti[i].height);
                 
-                // 碰撞偵測
-                if (dino.x < cacti[i].x + cacti[i].width && dino.x + dino.width > cacti[i].x && dino.y < cacti[i].y + cacti[i].height && dino.y + dino.height > cacti[i].y) {
+                // 【畫仙人掌 🌵】
+                ctx.fillText("🌵", cacti[i].x, cacti[i].y);
+                
+                // 碰撞偵測（稍微內縮邊緣讓體驗更精準）
+                if (dino.x + 4 < cacti[i].x + cacti[i].width && 
+                    dino.x + dino.width - 4 > cacti[i].x && 
+                    dino.y + 4 < cacti[i].y + cacti[i].height && 
+                    dino.y + dino.height - 4 > cacti[i].y) {
                     endGame();
                     return;
                 }
@@ -215,9 +218,8 @@
                     cacti.splice(i, 1);
                     score += 20;
                     document.getElementById("score").innerText = score;
-                    if (score % 100 === 0) gameSpeed += 0.5; // 越來越快
+                    if (score % 100 === 0) gameSpeed += 0.5;
                     
-                    // 達到 500 分，過關！
                     if (score >= 500) {
                         successUnlock();
                         return;
@@ -233,7 +235,8 @@
             cancelAnimationFrame(gameId);
             ctx.fillStyle = "red";
             ctx.font = "bold 20px sans-serif";
-            ctx.fillText("GAME OVER 💥", canvas.width/2 - 65, canvas.height/2);
+            ctx.textBaseline = "middle";
+            ctx.fillText("GAME OVER 💥", canvas.width/2 - 70, canvas.height/2);
             document.getElementById("restart-btn").style.display = "block";
         }
 
@@ -242,27 +245,22 @@
             initGame();
         }
 
-        // 成功滿500分，解鎖真正內容
         function successUnlock() {
             isGameOver = true;
             cancelAnimationFrame(gameId);
             
-            // 移除監聽器
             window.removeEventListener("keydown", handleJump);
             canvas.removeEventListener("touchstart", handleJump);
             canvas.removeEventListener("mousedown", handleJump);
 
-            // 切換畫面
             document.getElementById("award-image").src = savedImageSrc;
             document.getElementById("dino-stage").classList.add("hidden");
             document.getElementById("main-content").classList.remove("hidden");
             
-            // 播放音樂
             document.getElementById("bgm").play().catch(function(error) {
                 console.log("播放被瀏覽器攔截", error);
             });
 
-            // 滿天彩紙灑落
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
     </script>
