@@ -52,6 +52,9 @@
 
    <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
 
+<!-- 引入免費的彩色紙屑特效庫 -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
     const userData = {
         "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
@@ -70,6 +73,15 @@
             document.getElementById("bgm").play().catch(function(error) {
                 console.log("播放被瀏覽器攔截", error);
             });
+
+            // ---- 加上這行：蹦！滿螢幕的彩色紙屑噴發 ----
+            confetti({
+                particleCount: 150, // 紙屑數量
+                spread: 80,         // 噴發角度範圍
+                origin: { y: 0.6 }  // 從螢幕偏下方噴出來
+            });
+            // ----------------------------------------
+            
         } else {
             document.getElementById("error-message").innerText = "❌ 認證失敗：資料庫查無此使用者。";
         }
