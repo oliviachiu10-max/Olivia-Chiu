@@ -212,7 +212,7 @@
 
             // 隨機產生食物或炸彈
             if (Math.random() < 0.03) {
-                const types = ["🍎", "🍏", "🍉", "💣"];
+                const types = ["🍕", "🍔", "🍟", "🥬"];
                 const t = types[Math.floor(Math.random() * types.length)];
                 items.push({ x: Math.random() * 290, y: 0, type: t });
             }
@@ -223,7 +223,7 @@
 
                 // 判斷接到
                 if (items[i].y >= 200 && items[i].y <= 230 && items[i].x >= sheepX - 15 && items[i].x <= sheepX + 30) {
-                    if (items[i].type === "💣") {
+                    if (items[i].type === "🍕", "🍔", "🍟") {
                         catchScore = Math.max(0, catchScore - 1);
                     } else {
                         catchScore++;
@@ -317,7 +317,7 @@
         function resetGame() { cancelAnimationFrame(gameId); initGame(); }
 
         // --- 第三關：記憶翻牌 ---
-        let cardsArray = ["🐑", "🐑", "⭐", "⭐", "🎁", "🎁"];
+        let cardsArray = ["🐑", "🐑", "🐏", "🐏", "🦙", "🦙"];
         let flippedCards = []; let matchedCount = 0; let canFlip = true;
 
         function initMemoryGame() {
@@ -356,7 +356,7 @@
 
         // --- 第四關：羊羊快問快答 ---
         const quizData = [
-            { q: "請問「羊咩咩」最喜歡一邊跳舞一邊吃什麼？", a: ["高麗菜", "棉花糖", "青草（廢話）", "邱馨霈的零食"], ans: 2 },
+            { q: "請問「羊咩咩」最喜歡一邊跳舞一邊吃什麼？", a: ["", "小雞麵", "珍輕鬆", "無尾熊餅乾"], ans: 2 },
             { q: "當你對著一隻羊大喊「咩～～」，牠心裡通常在想什麼？", a: ["這人類好有禮貌", "這人怪怪的，報警喔", "牠在學我說話嗎？", "你有帶食物嗎？"], ans: 1 }
         ];
         let currentQuizIndex = 0;
