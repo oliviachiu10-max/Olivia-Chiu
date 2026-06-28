@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>高二人物資料庫</title>
+
+<style>
+
+body{
+font-family:"Microsoft JhengHei";
+background:#f8f5ef;
+text-align:center;
+padding:50px;
+}
+
+.card{
+max-width:600px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 0 20px rgba(0,0,0,.1);
+}
+
+input{
+padding:10px;
+width:250px;
+}
+
+button{
+padding:10px 20px;
+cursor:pointer;
+}
+
+.hidden{
+display:none;
+}
+
+img{
+width:100%;
+margin-top:20px;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🎖 高二人物資料庫</h1>
+
+<p>請輸入驗證代碼</p>
+
+<input id="code">
+
+<button onclick="checkCode()">
+驗證
+</button>
+
+<div id="result" class="hidden">
+
+<h2>✓ 驗證成功</h2>
+
+<h3 id="name"></h3>
+
+<p id="message"></p>
+
+<img id="award">
+
+</div>
+
+</div>
+
+<script>
+
+function checkCode(){
+
+let code=document.getElementById("code").value;
+
+if(code==="27CYH2026"){
+
+document.getElementById("result").classList.remove("hidden");
+
+document.getElementById("name").innerText="歡迎回來 陳羿蓁同學";
+
+document.getElementById("message").innerText=
+"謝謝你陪我度過高二，願未來繼續閃閃發光✨";
+
+document.getElementById("award").src=
+"你的圖片網址";
+
+}
+
+else{
+
+alert("驗證失敗");
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
