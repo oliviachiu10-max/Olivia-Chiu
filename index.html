@@ -28,16 +28,18 @@
             text-align: center; 
         }
         
-        #sheep-stage.card { max-width: 450px; }
+        #catch-stage.card { max-width: 450px; }
         #dino-stage.card { max-width: 500px; }
         #memory-stage.card { max-width: 450px; }
+        #quiz-stage.card { max-width: 450px; }
+        #rps-stage.card { max-width: 450px; }
         #main-content.card { max-width: 750px; }
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
         
         input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; text-align: center; margin-bottom: 15px; outline: none; }
         
-        button { width: 100%; padding: 12px; background: #203a43; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        button { width: 100%; padding: 12px; background: #203a43; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-bottom: 10px; }
         button:hover { background: #2c5364; }
         
         .error-message { color: #ff4d4f; font-size: 14px; margin-top: 15px; font-weight: bold; text-align: center; }
@@ -56,26 +58,29 @@
         .delay-4 { animation-delay: 5.0s; }
         @keyframes fadeInEffect { to { opacity: 1; transform: translateY(0); } }
 
-        /* 遊戲排版 */
-        #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
         .score-board { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
         
-        /* 點擊羊羊 */
-        .sheep-btn { font-size: 70px; background: none; border: none; cursor: pointer; width: auto; padding: 10px; outline: none; transition: transform 0.1s; display: inline-block; }
-        .sheep-btn:active { transform: scale(0.85); }
+        /* 第一關：接食物遊戲 */
+        #catchCanvas { background: #eef5f9; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
-        /* 記憶翻牌排版 */
+        /* 第二關：小恐龍 */
+        #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
+
+        /* 第三關：記憶翻牌 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 300px; }
         .grid-card { height: 90px; background: #203a43; border-radius: 8px; font-size: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; transition: background 0.3s, transform 0.2s; color: transparent; }
         .grid-card.flipped { background: #fff; border: 2px solid #203a43; color: initial; transform: rotateY(180deg); }
         .grid-card.matched { background: #e6b422; border: 2px solid #e6b422; color: initial; cursor: default; }
+
+        /* 第五關：猜拳 */
+        .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
+        .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
     </style>
 </head>
 <body>
 
     <div class="card" id="login-card">
         <h2 style="color: #333; margin-bottom: 20px;">身分認證系統 🌟</h2>
-        
         <div style="margin-bottom: 20px; background: rgba(255,192,203,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,64,129,0.2);">
             <p style="font-weight: bold; margin-bottom: 12px; color: #d81b60; font-size: 16px;">請問 邱馨霈是大美女嗎？</p>
             <label style="margin-right: 20px; cursor: pointer; font-size: 16px; font-weight: bold;">
@@ -85,22 +90,22 @@
                 <input type="radio" name="beauty-check" value="no" id="beauty-no" style="width: auto; margin-bottom: 0;"> 否🙂‍↔️
             </label>
         </div>
-
         <input type="text" id="username" placeholder="請輸入您的專屬代碼">
         <button onclick="handleLogin()">登入</button>
         <div class="error-message" id="error-message"></div>
     </div>
 
-    <div class="card hidden" id="sheep-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：狂點羊羊 🐏</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">快點擊這隻羊羊滿 <span style="color: #203a43; font-weight: bold;">30 次</span> 來餵飽牠！</p>
-        <div class="score-board">點擊次數: <span id="sheep-count">0</span> / 30</div>
-        <button class="sheep-btn" onclick="clickSheep()">🐑</button>
+    <div class="card hidden" id="catch-stage">
+        <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：羊羊大胃王 🍎</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個水果！</p>
+        <p style="color: #ff4d4f; font-size: 12px; margin-bottom: 10px;">⚠️ 注意：接到炸彈 (💣) 會扣分喔！</p>
+        <div class="score-board">已吃到水果: <span id="catch-score">0</span> / 5</div>
+        <canvas id="catchCanvas" width="320" height="250"></canvas>
     </div>
 
     <div class="card hidden" id="dino-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第二關：羊羊向前衝 🌵</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">控制小羊躲避仙人掌，達到 <span style="color: #ff4081; font-weight: bold;">200 分</span> 解鎖下一關！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">達到 <span style="color: #ff4081; font-weight: bold;">200 分</span> 解鎖下一關！</p>
         <div class="score-board">目前分數: <span id="score">0</span> / 200</div>
         <canvas id="gameCanvas" width="400" height="150"></canvas>
         <p style="font-size: 13px; color: #888;">點擊畫面或按空白鍵可以讓小羊跳躍</p>
@@ -109,8 +114,27 @@
 
     <div class="card hidden" id="memory-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🧩 第三關：翻牌對對碰 🧩</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">找出三對相同的圖案就能完成最終挑戰！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">找出三對相同的圖案就能進入下一關！</p>
         <div class="grid" id="texture-grid"></div>
+    </div>
+
+    <div class="card hidden" id="quiz-stage">
+        <h2 style="color: #333; margin-bottom: 5px;">📝 第四關：羊羊腦筋急轉彎 📝</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;" id="quiz-question">題目載入中...</p>
+        <div id="quiz-options"></div>
+        <div class="error-message" id="quiz-error"></div>
+    </div>
+
+    <div class="card hidden" id="rps-stage">
+        <h2 style="color: #333; margin-bottom: 5px;">👊 第五關：戰勝命運之羊 🖐️</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">跟關主小羊猜拳，贏了就能抱走大獎！</p>
+        <div style="font-size: 50px; margin: 20px 0;" id="rps-status">🐑 VS ❓</div>
+        <div id="rps-result" style="font-weight: bold; color: #cd9b1d; margin-bottom: 15px;">準備好就出拳吧！</div>
+        <div>
+            <button class="rps-btn" onclick="playRPS('✊')">✊</button>
+            <button class="rps-btn" onclick="playRPS('🖐️')">🖐️</button>
+            <button class="rps-btn" onclick="playRPS('✌️')">✌️</button>
+        </div>
     </div>
 
     <div class="card hidden" id="main-content">
@@ -136,44 +160,92 @@
         };
 
         let savedImageSrc = "";
-        let sheepClickCount = 0;
 
         function handleLogin() {
             const errorDiv = document.getElementById("error-message");
             const isYes = document.getElementById("beauty-yes").checked;
             const isNo = document.getElementById("beauty-no").checked;
 
-            if (!isYes && !isNo) {
-                errorDiv.innerText = "❌ 請先回答上面的問題才能登入！";
-                return;
-            }
-            if (isNo) {
-                errorDiv.innerText = "❌ 答錯了！提醒您作答時不應違背良心";
-                return;
-            }
+            if (!isYes && !isNo) { errorDiv.innerText = "❌ 請先回答上面的問題才能登入！"; return; }
+            if (isNo) { errorDiv.innerText = "❌ 答錯了！提醒您作答時不應違背良心"; return; }
 
             const val = document.getElementById("username").value.trim();
             if (userData[val]) {
                 savedImageSrc = userData[val];
                 document.getElementById("login-card").classList.add("hidden");
-                document.getElementById("sheep-stage").classList.remove("hidden");
+                document.getElementById("catch-stage").classList.remove("hidden");
+                initCatchGame();
             } else {
                 errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
             }
         }
 
-        // 第一關：點擊羊羊
-        function clickSheep() {
-            sheepClickCount++;
-            document.getElementById("sheep-count").innerText = sheepClickCount;
-            if (sheepClickCount >= 30) {
-                document.getElementById("sheep-stage").classList.add("hidden");
-                document.getElementById("dino-stage").classList.remove("hidden");
-                initGame();
-            }
+        // --- 第一關：大胃王接食物核心 ---
+        const cCanvas = document.getElementById("catchCanvas");
+        const cCtx = cCanvas.getContext("2d");
+        let catchScore, sheepX, items, catchGameId;
+
+        function initCatchGame() {
+            catchScore = 0; sheepX = 140; items = [];
+            document.getElementById("catch-score").innerText = catchScore;
+            
+            cCanvas.addEventListener("mousemove", (e) => {
+                const rect = cCanvas.getBoundingClientRect();
+                sheepX = e.clientX - rect.left - 20;
+                if(sheepX < 0) sheepX = 0;
+                if(sheepX > 280) sheepX = 280;
+            });
+            cCanvas.addEventListener("touchstart", (e) => {
+                const rect = cCanvas.getBoundingClientRect();
+                sheepX = e.touches[0].clientX - rect.left - 20;
+            });
+
+            catchGameLoop();
         }
 
-        // --- 第二關：羊羊跑酷遊戲 ---
+        function catchGameLoop() {
+            cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            
+            // 繪製接食物的羊
+            cCtx.font = "30px sans-serif";
+            cCtx.fillText("🐏", sheepX, 220);
+
+            // 隨機產生食物或炸彈
+            if (Math.random() < 0.03) {
+                const types = ["🍎", "🍏", "🍉", "💣"];
+                const t = types[Math.floor(Math.random() * types.length)];
+                items.push({ x: Math.random() * 290, y: 0, type: t });
+            }
+
+            for (let i = items.length - 1; i >= 0; i--) {
+                items[i].y += 3;
+                cCtx.fillText(items[i].type, items[i].x, items[i].y);
+
+                // 判斷接到
+                if (items[i].y >= 200 && items[i].y <= 230 && items[i].x >= sheepX - 15 && items[i].x <= sheepX + 30) {
+                    if (items[i].type === "💣") {
+                        catchScore = Math.max(0, catchScore - 1);
+                    } else {
+                        catchScore++;
+                    }
+                    document.getElementById("catch-score").innerText = catchScore;
+                    items.splice(i, 1);
+
+                    if (catchScore >= 5) {
+                        cancelAnimationFrame(catchGameId);
+                        document.getElementById("catch-stage").classList.add("hidden");
+                        document.getElementById("dino-stage").classList.remove("hidden");
+                        initGame();
+                        return;
+                    }
+                    continue;
+                }
+                if (items[i].y > 250) items.splice(i, 1);
+            }
+            catchGameId = requestAnimationFrame(catchGameLoop);
+        }
+
+        // --- 第二關：小恐龍跑酷 ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let dino, cacti, score, gameId, isGameOver;
@@ -181,13 +253,9 @@
 
         function initGame() {
             dino = { x: 30, y: 115, width: 26, height: 26, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
-            cacti = [];
-            score = 0;
-            isGameOver = false;
-            gameSpeed = 4;
+            cacti = []; score = 0; isGameOver = false; gameSpeed = 4;
             document.getElementById("restart-btn").style.display = "none";
             document.getElementById("score").innerText = score;
-            
             window.addEventListener("keydown", handleJump);
             canvas.addEventListener("touchstart", handleJump);
             canvas.addEventListener("mousedown", handleJump);
@@ -196,10 +264,7 @@
 
         function handleJump(e) {
             if (e.code === "Space" || e.type === "touchstart" || e.type === "mousedown") {
-                if (dino.isGrounded && !isGameOver) {
-                    dino.vy = dino.jumpForce;
-                    dino.isGrounded = false;
-                }
+                if (dino.isGrounded && !isGameOver) { dino.vy = dino.jumpForce; dino.isGrounded = false; }
                 if(e.code === "Space") e.preventDefault();
             }
         }
@@ -213,40 +278,26 @@
         function gameLoop() {
             if (isGameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "#bbb"; ctx.beginPath(); ctx.moveTo(0, 142); ctx.lineTo(canvas.width, 142); ctx.stroke();
             
-            ctx.strokeStyle = "#bbb";
-            ctx.beginPath(); ctx.moveTo(0, 142); ctx.lineTo(canvas.width, 142); ctx.stroke();
-            
-            dino.vy += dino.gravity;
-            dino.y += dino.vy;
+            dino.vy += dino.gravity; dino.y += dino.vy;
             if (dino.y >= 115) { dino.y = 115; dino.vy = 0; dino.isGrounded = true; }
             
-            // 角色改成羊羊 🐑
-            ctx.font = "26px sans-serif";
-            ctx.textBaseline = "top";
-            ctx.fillText("🐑", dino.x, dino.y);
+            ctx.font = "26px sans-serif"; ctx.textBaseline = "top"; ctx.fillText("🐑", dino.x, dino.y);
             
             spawnCactus();
             for (let i = cacti.length - 1; i >= 0; i--) {
-                cacti[i].x -= gameSpeed;
-                ctx.fillText("🌵", cacti[i].x, cacti[i].y);
-                
+                cacti[i].x -= gameSpeed; ctx.fillText("🌵", cacti[i].x, cacti[i].y);
                 if (dino.x + 4 < cacti[i].x + cacti[i].width && dino.x + dino.width - 4 > cacti[i].x && dino.y + 4 < cacti[i].y + cacti[i].height && dino.y + dino.height - 4 > cacti[i].y) {
-                    endGame();
-                    return;
+                    endGame(); return;
                 }
-                
                 if (cacti[i].x + cacti[i].width < 0) {
-                    cacti.splice(i, 1);
-                    score += 20;
+                    cacti.splice(i, 1); score += 20;
                     document.getElementById("score").innerText = score;
                     if (score % 100 === 0) gameSpeed += 0.5;
-                    
                     if (score >= 200) {
-                        isGameOver = true;
-                        cancelAnimationFrame(gameId);
+                        isGameOver = true; cancelAnimationFrame(gameId);
                         window.removeEventListener("keydown", handleJump);
-                        
                         document.getElementById("dino-stage").classList.add("hidden");
                         document.getElementById("memory-stage").classList.remove("hidden");
                         initMemoryGame();
@@ -258,89 +309,116 @@
         }
 
         function endGame() {
-            isGameOver = true;
-            cancelAnimationFrame(gameId);
-            ctx.fillStyle = "red";
-            ctx.font = "bold 20px sans-serif";
-            ctx.textBaseline = "middle";
+            isGameOver = true; cancelAnimationFrame(gameId);
+            ctx.fillStyle = "red"; ctx.font = "bold 20px sans-serif"; ctx.textBaseline = "middle";
             ctx.fillText("GAME OVER 💥", canvas.width/2 - 70, canvas.height/2);
             document.getElementById("restart-btn").style.display = "block";
         }
-
-        function resetGame() {
-            cancelAnimationFrame(gameId);
-            initGame();
-        }
+        function resetGame() { cancelAnimationFrame(gameId); initGame(); }
 
         // --- 第三關：記憶翻牌 ---
-        let cardsArray = ["🐑", "🐑", "🐏", "🐏", "🦙", "🦙"];
-        let flippedCards = [];
-        let matchedCount = 0;
-        let canFlip = true;
+        let cardsArray = ["🐑", "🐑", "⭐", "⭐", "🎁", "🎁"];
+        let flippedCards = []; let matchedCount = 0; let canFlip = true;
 
         function initMemoryGame() {
             const grid = document.getElementById("texture-grid");
-            grid.innerHTML = "";
-            flippedCards = [];
-            matchedCount = 0;
-            canFlip = true;
-            
+            grid.innerHTML = ""; flippedCards = []; matchedCount = 0; canFlip = true;
             cardsArray.sort(() => 0.5 - Math.random());
-            
             for (let i = 0; i < cardsArray.length; i++) {
                 const cardEl = document.createElement("div");
-                cardEl.classList.add("grid-card");
-                cardEl.dataset.icon = cardsArray[i];
-                cardEl.innerText = cardsArray[i];
-                cardEl.addEventListener("click", flipCard);
-                grid.appendChild(cardEl);
+                cardEl.classList.add("grid-card"); cardEl.dataset.icon = cardsArray[i]; cardEl.innerText = cardsArray[i];
+                cardEl.addEventListener("click", flipCard); grid.appendChild(cardEl);
             }
         }
 
         function flipCard() {
-            if (!canFlip) return;
-            if (this.classList.contains("flipped") || this.classList.contains("matched")) return;
-
-            this.classList.add("flipped");
-            flippedCards.push(this);
-
-            if (flippedCards.length === 2) {
-                canFlip = false;
-                checkMatch();
-            }
+            if (!canFlip || this.classList.contains("flipped") || this.classList.contains("matched")) return;
+            this.classList.add("flipped"); flippedCards.push(this);
+            if (flippedCards.length === 2) { canFlip = false; checkMatch(); }
         }
 
         function checkMatch() {
             const [card1, card2] = flippedCards;
             if (card1.dataset.icon === card2.dataset.icon) {
-                card1.classList.add("matched");
-                card2.classList.add("matched");
-                matchedCount += 2;
-                flippedCards = [];
-                canFlip = true;
-                
+                card1.classList.add("matched"); card2.classList.add("matched");
+                matchedCount += 2; flippedCards = []; canFlip = true;
                 if (matchedCount === cardsArray.length) {
-                    setTimeout(successUnlock, 600);
+                    setTimeout(() => {
+                        document.getElementById("memory-stage").classList.add("hidden");
+                        document.getElementById("quiz-stage").classList.remove("hidden");
+                        initQuiz();
+                    }, 600);
                 }
             } else {
-                setTimeout(() => {
-                    card1.classList.remove("flipped");
-                    card2.classList.remove("flipped");
-                    flippedCards = [];
-                    canFlip = true;
-                }, 1000);
+                setTimeout(() => { card1.classList.remove("flipped"); card2.classList.remove("flipped"); flippedCards = []; canFlip = true; }, 1000);
+            }
+        }
+
+        // --- 第四關：羊羊快問快答 ---
+        const quizData = [
+            { q: "請問「羊咩咩」最喜歡一邊跳舞一邊吃什麼？", a: ["高麗菜", "棉花糖", "青草（廢話）", "邱馨霈的零食"], ans: 2 },
+            { q: "當你對著一隻羊大喊「咩～～」，牠心裡通常在想什麼？", a: ["這人類好有禮貌", "這人怪怪的，報警喔", "牠在學我說話嗎？", "你有帶食物嗎？"], ans: 1 }
+        ];
+        let currentQuizIndex = 0;
+
+        function initQuiz() {
+            currentQuizIndex = 0;
+            showQuiz();
+        }
+
+        function showQuiz() {
+            document.getElementById("quiz-error").innerText = "";
+            const current = quizData[currentQuizIndex];
+            document.getElementById("quiz-question").innerText = `(${currentQuizIndex+1}/2) ${current.q}`;
+            const optionsDiv = document.getElementById("quiz-options");
+            optionsDiv.innerHTML = "";
+            current.a.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(idx);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(idx) {
+            if (idx === quizData[currentQuizIndex].ans) {
+                currentQuizIndex++;
+                if (currentQuizIndex < quizData.length) {
+                    showQuiz();
+                } else {
+                    document.getElementById("quiz-stage").classList.add("hidden");
+                    document.getElementById("rps-stage").classList.remove("hidden");
+                }
+            } else {
+                document.getElementById("quiz-error").innerText = "❌ 答錯了！小羊用鄙視的眼神看著妳，再猜一次！";
+            }
+        }
+
+        // --- 第五關：命運猜拳 ---
+        function playRPS(playerChoice) {
+            const choices = ["✊", "🖐️", "✌️"];
+            const sheepChoice = choices[Math.floor(Math.random() * choices.length)];
+            document.getElementById("rps-status").innerText = `🐏${sheepChoice} VS ${playerChoice}`;
+            
+            if (playerChoice === sheepChoice) {
+                document.getElementById("rps-result").innerText = "平手！小羊不服輸，再來一把！";
+            } else if (
+                (playerChoice === "✊" && sheepChoice === "✌️") ||
+                (playerChoice === "🖐️" && sheepChoice === "✊") ||
+                (playerChoice === "✌️" && sheepChoice === "🖐️")
+            ) {
+                document.getElementById("rps-result").innerText = "🎉 妳贏了！小羊心服口服！";
+                setTimeout(successUnlock, 1000);
+            } else {
+                document.getElementById("rps-result").innerText = "💥 妳輸了！小羊得意地咩咩笑，重新出拳！";
             }
         }
 
         function successUnlock() {
             document.getElementById("award-image").src = savedImageSrc;
-            document.getElementById("memory-stage").classList.add("hidden");
+            document.getElementById("rps-stage").classList.add("hidden");
             document.getElementById("main-content").classList.remove("hidden");
-            
-            document.getElementById("bgm").play().catch(function(error) {
-                console.log("播放被瀏覽器攔截", error);
-            });
-
+            document.getElementById("bgm").play().catch(err => console.log(err));
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
     </script>
