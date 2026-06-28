@@ -123,7 +123,7 @@
 
     <div class="card hidden" id="quiz-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🚧 第四關：抓癢還是抓羊 🚧</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">當音符(🌟)滾入左側黃圈時，點擊按鈕或按空白鍵！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">當羊羊🐑跑入滾入左側黃圈時，點擊按鈕或按空白鍵！</p>
         <div class="score-board">完美點擊: <span id="rhythm-score">0</span> / 5</div>
         <canvas id="rhythmCanvas" width="360" height="100"></canvas>
         <button id="rhythm-hit-btn" onclick="hitNote()" style="background: #e6b422; color: #1a1a1a; font-size: 18px;">🔥 就是現在！點擊！ 🔥</button>
@@ -428,7 +428,7 @@
             rCtx.textBaseline = "middle";
             for (let i = notes.length - 1; i >= 0; i--) {
                 notes[i].x -= 3; // 移动速度
-                rCtx.fillText("🌟", notes[i].x - 12, notes[i].y);
+                rCtx.fillText("🐑", notes[i].x - 12, notes[i].y);
 
                 // 超出邊界代表漏掉
                 if (notes[i].x < 10) {
