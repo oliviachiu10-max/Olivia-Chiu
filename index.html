@@ -28,6 +28,7 @@
             text-align: center; 
         }
         
+        #dino-stage.card { max-width: 500px; }
         #main-content.card { max-width: 750px; }
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
@@ -52,6 +53,10 @@
         .delay-3 { animation-delay: 3.6s; }
         .delay-4 { animation-delay: 5.0s; }
         @keyframes fadeInEffect { to { opacity: 1; transform: translateY(0); } }
+
+        /* 小恐龍遊戲排版 */
+        #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
+        .score-board { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -60,12 +65,12 @@
         <h2 style="color: #333; margin-bottom: 20px;">身分認證系統 🌟</h2>
         
         <div style="margin-bottom: 20px; background: rgba(255,192,203,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,64,129,0.2);">
-            <p style="font-weight: bold; margin-bottom: 12px; color: #d81b60; font-size: 16px;">請問 邱馨霈是大美女嗎？</p>
+            <p style="font-weight: bold; margin-bottom: 12px; color: #d81b60; font-size: 16px;">你邱馨霈是大美女嗎？</p>
             <label style="margin-right: 20px; cursor: pointer; font-size: 16px; font-weight: bold;">
-                <input type="radio" name="beauty-check" value="yes" id="beauty-yes" style="width: auto; margin-bottom: 0;"> 是 🙂‍↕️
+                <input type="radio" name="beauty-check" value="yes" id="beauty-yes" style="width: auto; margin-bottom: 0;"> 是 😍
             </label>
             <label style="cursor: pointer; font-size: 16px; font-weight: bold;">
-                <input type="radio" name="beauty-check" value="no" id="beauty-no" style="width: auto; margin-bottom: 0;"> 否 🙂‍↔️
+                <input type="radio" name="beauty-check" value="no" id="beauty-no" style="width: auto; margin-bottom: 0;"> 否 ❌
             </label>
         </div>
 
@@ -74,12 +79,21 @@
         <div class="error-message" id="error-message"></div>
     </div>
 
+    <div class="card hidden" id="dino-stage">
+        <h2 style="color: #333; margin-bottom: 5px;">🦖 終極挑戰 🦕</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">必須達到 <span style="color: #ff4081; font-weight: bold;">500 分</span> 才能解鎖妳的獎狀！</p>
+        <div class="score-board">目前分數: <span id="score">0</span> / 500</div>
+        <canvas id="gameCanvas" width="400" height="150"></canvas>
+        <p style="font-size: 13px; color: #888;">點擊畫面或按空白鍵可以讓小恐龍跳躍</p>
+        <button id="restart-btn" onclick="resetGame()" style="margin-top: 15px; background: #666; display: none;">重新開始</button>
+    </div>
+
     <div class="card hidden" id="main-content">
         <div class="brand-header"><h2>🎉 認證成功 🎉</h2></div>
         <div class="letter-section">
             <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
             <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
-            <div class="fade-in delay-2">希望以後想到這一年 除了一堆考試 也會想到我們一起做過的那些蠢事</div>
+            <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，也會想到我們一起做過的那些蠢事</div>
             <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
             <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
         </div>
@@ -97,43 +111,159 @@
             "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
         };
 
+        let savedImageSrc = ""; // 暫存要顯示的獎狀
+
         function handleLogin() {
             const errorDiv = document.getElementById("error-message");
             const isYes = document.getElementById("beauty-yes").checked;
             const isNo = document.getElementById("beauty-no").checked;
 
-            // 1. 檢查有沒有勾選「大美女」
             if (!isYes && !isNo) {
                 errorDiv.innerText = "❌ 請先回答上面的問題才能登入！";
                 return;
             }
             if (isNo) {
-                errorDiv.innerText = "❌ 答錯了！提醒您請誠實作答！🫵🏻";
+                errorDiv.innerText = "❌ 答錯了！請承認邱馨霈是大美女才能登入！😤";
                 return;
             }
 
-            // 2. 通過美女驗證後，驗證密碼代碼
             const val = document.getElementById("username").value.trim();
             if (userData[val]) {
-                document.getElementById("award-image").src = userData[val];
+                savedImageSrc = userData[val]; // 把獎狀路徑記下來
+                
+                // 隱藏登入頁，顯示小恐龍遊戲
                 document.getElementById("login-card").classList.add("hidden");
-                document.getElementById("main-content").classList.remove("hidden");
+                document.getElementById("dino-stage").classList.remove("hidden");
                 
-                // 3. 播放音樂
-                document.getElementById("bgm").play().catch(function(error) {
-                    console.log("播放被瀏覽器攔截", error);
-                });
-
-                // 4. 蹦！滿螢幕的彩色紙屑噴發
-                confetti({
-                    particleCount: 150,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
-                
+                // 啟動遊戲
+                initGame();
             } else {
                 errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
             }
+        }
+
+        // --- 小恐龍遊戲核心程式碼 ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let dino, cacti, score, gameId, isGameOver;
+        let gameSpeed = 4;
+
+        function initGame() {
+            dino = { x: 30, y: 120, width: 20, height: 25, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
+            cacti = [];
+            score = 0;
+            isGameOver = false;
+            gameSpeed = 4;
+            document.getElementById("restart-btn").style.display = "none";
+            document.getElementById("score").innerText = score;
+            
+            // 監聽跳躍 (支援鍵盤與手機/iPad點擊)
+            window.addEventListener("keydown", handleJump);
+            canvas.addEventListener("touchstart", handleJump);
+            canvas.addEventListener("mousedown", handleJump);
+            
+            gameLoop();
+        }
+
+        function handleJump(e) {
+            if (e.code === "Space" || e.type === "touchstart" || e.type === "mousedown") {
+                if (dino.isGrounded && !isGameOver) {
+                    dino.vy = dino.jumpForce;
+                    dino.isGrounded = false;
+                }
+                if(e.code === "Space") e.preventDefault();
+            }
+        }
+
+        function spawnCactus() {
+            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 150 + Math.random() * 100) {
+                cacti.push({ x: canvas.width, y: 125, width: 15, height: 20 });
+            }
+        }
+
+        function gameLoop() {
+            if (isGameOver) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 地平線
+            ctx.strokeStyle = "#bbb";
+            ctx.beginPath(); ctx.moveTo(0, 145); ctx.lineTo(canvas.width, 145); ctx.stroke();
+            
+            // 更新與繪製小恐龍
+            dino.vy += dino.gravity;
+            dino.y += dino.vy;
+            if (dino.y >= 120) { dino.y = 120; dino.vy = 0; dino.isGrounded = true; }
+            ctx.fillStyle = "#555";
+            ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+            
+            // 處理仙人掌
+            spawnCactus();
+            for (let i = cacti.length - 1; i >= 0; i--) {
+                cacti[i].x -= gameSpeed;
+                ctx.fillStyle = "#228b22";
+                ctx.fillRect(cacti[i].x, cacti[i].y, cacti[i].width, cacti[i].height);
+                
+                // 碰撞偵測
+                if (dino.x < cacti[i].x + cacti[i].width && dino.x + dino.width > cacti[i].x && dino.y < cacti[i].y + cacti[i].height && dino.y + dino.height > cacti[i].y) {
+                    endGame();
+                    return;
+                }
+                
+                if (cacti[i].x + cacti[i].width < 0) {
+                    cacti.splice(i, 1);
+                    score += 20;
+                    document.getElementById("score").innerText = score;
+                    if (score % 100 === 0) gameSpeed += 0.5; // 越來越快
+                    
+                    // 達到 500 分，過關！
+                    if (score >= 500) {
+                        successUnlock();
+                        return;
+                    }
+                }
+            }
+            
+            gameId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            cancelAnimationFrame(gameId);
+            ctx.fillStyle = "red";
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText("GAME OVER 💥", canvas.width/2 - 65, canvas.height/2);
+            document.getElementById("restart-btn").style.display = "block";
+        }
+
+        function resetGame() {
+            cancelAnimationFrame(gameId);
+            initGame();
+        }
+
+        // 成功滿500分，解鎖真正內容
+        function successUnlock() {
+            isGameOver = true;
+            cancelAnimationFrame(gameId);
+            
+            // 移除監聽器
+            window.removeEventListener("keydown", handleJump);
+            canvas.removeEventListener("touchstart", handleJump);
+            canvas.removeEventListener("mousedown", handleJump);
+
+            // 切換畫面
+            document.getElementById("award-image").src = savedImageSrc;
+            document.getElementById("dino-stage").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            
+            // 播放音樂
+            document.getElementById("bgm").play().catch(function(error) {
+                console.log("播放被瀏覽器攔截", error);
+            });
+
+            // 滿天彩紙灑落
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
     </script>
 </body>
