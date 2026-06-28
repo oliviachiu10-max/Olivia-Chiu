@@ -108,3 +108,181 @@
             <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，也會想到我們一起做過的那些蠢事</div>
             <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
             <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
+        </div>
+        <div class="award-section"><h3>🏆 您的羊羊專屬獎狀 🏆</h3><img id="award-image" src=""></div>
+    </div>
+
+    <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const userData = {
+            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
+            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
+            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
+        };
+
+        let savedImageSrc = "";
+        let sheepClickCount = 0;
+
+        function handleLogin() {
+            const errorDiv = document.getElementById("error-message");
+            const isYes = document.getElementById("beauty-yes").checked;
+            const isNo = document.getElementById("beauty-no").checked;
+
+            if (!isYes && !isNo) {
+                errorDiv.innerText = "❌ 請先回答上面的問題才能登入！";
+                return;
+            }
+            if (isNo) {
+                errorDiv.innerText = "❌ 答錯了！提醒您作答時不應違背良心";
+                return;
+            }
+
+            const val = document.getElementById("username").value.trim();
+            if (userData[val]) {
+                savedImageSrc = userData[val];
+                document.getElementById("login-card").classList.add("hidden");
+                document.getElementById("sheep-stage").classList.remove("hidden");
+            } else {
+                errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
+            }
+        }
+
+        // 第一關：點擊羊羊邏輯
+        function clickSheep() {
+            sheepClickCount++;
+            document.getElementById("sheep-count").innerText = sheepClickCount;
+            if (sheepClickCount >= 30) {
+                document.getElementById("sheep-stage").classList.add("hidden");
+                document.getElementById("dino-stage").classList.remove("hidden");
+                initGame();
+            }
+        }
+
+        // --- 小恐龍遊戲核心程式碼 ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let dino, cacti, score, gameId, isGameOver;
+        let gameSpeed = 4;
+
+        function initGame() {
+            dino = { x: 30, y: 115, width: 26, height: 26, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
+            cacti = [];
+            score = 0;
+            isGameOver = false;
+            gameSpeed = 4;
+            document.getElementById("restart-btn").style.display = "none";
+            document.getElementById("score").innerText = score;
+            
+            window.addEventListener("keydown", handleJump);
+            canvas.addEventListener("touchstart", handleJump);
+            canvas.addEventListener("mousedown", handleJump);
+            
+            gameLoop();
+        }
+
+        function handleJump(e) {
+            if (e.code === "Space" || e.type === "touchstart" || e.type === "mousedown") {
+                if (dino.isGrounded && !isGameOver) {
+                    dino.vy = dino.jumpForce;
+                    dino.isGrounded = false;
+                }
+                if(e.code === "Space") e.preventDefault();
+            }
+        }
+
+        function spawnCactus() {
+            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 160 + Math.random() * 120) {
+                cacti.push({ x: canvas.width, y: 115, width: 22, height: 26 });
+            }
+        }
+
+        function gameLoop() {
+            if (isGameOver) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 地平線
+            ctx.strokeStyle = "#bbb";
+            ctx.beginPath(); ctx.moveTo(0, 142); ctx.lineTo(canvas.width, 142); ctx.stroke();
+            
+            // 更新小恐龍物理位置
+            dino.vy += dino.gravity;
+            dino.y += dino.vy;
+            if (dino.y >= 115) { dino.y = 115; dino.vy = 0; dino.isGrounded = true; }
+            
+            // 繪製恐龍 🦕
+            ctx.font = "26px sans-serif";
+            ctx.textBaseline = "top";
+            ctx.fillText("🦕", dino.x, dino.y);
+            
+            // 處理仙人掌
+            spawnCactus();
+            for (let i = cacti.length - 1; i >= 0; i--) {
+                cacti[i].x -= gameSpeed;
+                ctx.fillText("🌵", cacti[i].x, cacti[i].y);
+                
+                // 碰撞偵測
+                if (dino.x + 4 < cacti[i].x + cacti[i].width && 
+                    dino.x + dino.width - 4 > cacti[i].x && 
+                    dino.y + 4 < cacti[i].y + cacti[i].height && 
+                    dino.y + dino.height - 4 > cacti[i].y) {
+                    endGame();
+                    return;
+                }
+                
+                if (cacti[i].x + cacti[i].width < 0) {
+                    cacti.splice(i, 1);
+                    score += 20;
+                    document.getElementById("score").innerText = score;
+                    if (score % 100 === 0) gameSpeed += 0.5;
+                    
+                    if (score >= 200) {
+                        successUnlock();
+                        return;
+                    }
+                }
+            }
+            
+            gameId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            cancelAnimationFrame(gameId);
+            ctx.fillStyle = "red";
+            ctx.font = "bold 20px sans-serif";
+            ctx.textBaseline = "middle";
+            ctx.fillText("GAME OVER 💥", canvas.width/2 - 70, canvas.height/2);
+            document.getElementById("restart-btn").style.display = "block";
+        }
+
+        function resetGame() {
+            cancelAnimationFrame(gameId);
+            initGame();
+        }
+
+        function successUnlock() {
+            isGameOver = true;
+            cancelAnimationFrame(gameId);
+            
+            window.removeEventListener("keydown", handleJump);
+            canvas.removeEventListener("touchstart", handleJump);
+            canvas.removeEventListener("mousedown", handleJump);
+
+            document.getElementById("award-image").src = savedImageSrc;
+            document.getElementById("dino-stage").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            
+            document.getElementById("bgm").play().catch(function(error) {
+                console.log("播放被瀏覽器攔截", error);
+            });
+
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+    </script>
+</body>
+</html>
