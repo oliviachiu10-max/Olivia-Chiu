@@ -6,7 +6,6 @@
     <title>羊羊家族高二回顧系統🌟</title>
     <style>
         * { box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; }
         .card { background: rgba(255, 255, 255, 0.96); padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 420px; transition: 0.5s; text-align: center; }
         #main-content.card { max-width: 750px; }
         .brand-header h2 { margin: 0; color: #203a43; letter-spacing: 2px; }
@@ -26,51 +25,6 @@
         .delay-4 { animation-delay: 5.0s; }
         @keyframes fadeInEffect { to { opacity: 1; transform: translateY(0); } }
 
-</head>
-    /* 這裡幫妳把背景改成妳們的合照，並加上一層淡淡的柔光遮罩，字體會更清晰喔！ */
-    body {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url("https://i.postimg.cc/FKbP0PVP/retro-recap.png") !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-attachment: fixed !important;
-        background-repeat: no-repeat !important;
-    }
-</style>
-
-<audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-<script>
-    const userData = {
-        "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
-        "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
-        "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
-    };
-
-    function handleLogin() {
-        const val = document.getElementById("username").value.trim();
-        if (userData[val]) {
-            document.getElementById("award-image").src = userData[val];
-            document.getElementById("login-card").classList.add("hidden");
-            document.getElementById("main-content").classList.remove("hidden");
-            
-            // 登入成功，音樂直接播放！
-            document.getElementById("bgm").play().catch(function(error) {
-                console.log("播放被瀏覽器攔截", error);
-            });
-
-            // 蹦！滿螢幕的彩色紙屑噴發
-            confetti({
-                particleCount: 150,
-                spread: 80,
-                origin: { y: 0.6 }
-            });
-            
-        } else {
-            document.getElementById("error-message").innerText = "❌ 認證失敗：資料庫查無此使用者。";
-        }
-    }
-</script>
-</body>
-</html>
+        /* 這裡幫妳把背景改成妳們的合照，並加上一層淡淡的柔光遮罩，字體會更清晰喔！ */
+        body {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0
