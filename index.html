@@ -5,21 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>羊羊家族高二回顧系統🌟</title>
     <style>
-        * { box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px; }
-        .card { background: rgba(255, 255, 255, 0.96); padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 420px; transition: 0.5s; text-align: center; }
+        * { box-sizing: border-box; font-family: -apple-system, 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
+        
+        /* 這裡恢復原本的黑藍色漸層背景，不放照片 */
+        body { 
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        
+        .card { 
+            background: rgba(255, 255, 255, 0.96); 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            width: 100%; 
+            max-width: 420px; 
+            transition: 0.5s; 
+            text-align: center; 
+        }
+        
         #main-content.card { max-width: 750px; }
-        .brand-header h2 { margin: 0; color: #203a43; letter-spacing: 2px; }
-        .brand-header p { color: #666; font-size: 14px; }
-        .input-group { margin: 20px 0; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; text-align: center; }
-        button { width: 100%; padding: 12px; background: #203a43; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .error-text { color: #ff4d4f; font-size: 14px; margin-top: 15px; font-weight: bold; }
+        
+        .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
+        
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; text-align: center; margin-bottom: 15px; outline: none; }
+        
+        button { width: 100%; padding: 12px; background: #203a43; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        button:hover { background: #2c5364; }
+        
+        .error-message { color: #ff4d4f; font-size: 14px; margin-top: 15px; font-weight: bold; text-align: center; }
+        
         .hidden { display: none !important; }
-        .letter-section { background: #fdfbf7; padding: 25px; border-left: 5px solid #e6b422; text-align: left; line-height: 2; color: #333; margin-bottom: 25px; }
+        
+        .letter-section { background: #fdfbf7; padding: 25px; border-left: 5px solid #e6b422; text-align: left; line-height: 2; color: #333; margin-bottom: 25px; font-size: 18px; }
+        
+        .award-section h3 { margin: 20px 0; color: #cd9b1d; }
         .award-section img { width: 100%; max-width: 650px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); margin-top: 15px; }
-        .fade-in { opacity: 0; transform: translateY(15px); animation: fadeInEffect 1.2s forwards; }
+        
+        .fade-in { opacity: 0; transform: translateY(15px); animation: fadeInEffect 1.2s forwards; margin-bottom: 15px; }
         .delay-1 { animation-delay: 1.2s; }
         .delay-2 { animation-delay: 2.4s; }
         .delay-3 { animation-delay: 3.6s; }
@@ -28,85 +56,4 @@
     </style>
 </head>
 <body>
-    <div class="login-card" id="login-card">
-        <h2>身分認證系统 🌟</h2>
-        
-        <div style="margin-bottom: 20px; background: rgba(255,192,203,0.3); padding: 12px; border-radius: 8px;">
-            <p style="font-weight: bold; margin-bottom: 10px; color: #d81b60;">你邱馨霈是大美女嗎？</p>
-            <label style="margin-right: 15px; cursor: pointer;">
-                <input type="radio" name="beauty-check" value="yes" id="beauty-yes"> 是 😍
-            </label>
-            <label style="cursor: pointer;">
-                <input type="radio" name="beauty-check" value="no" id="beauty-no"> 否 ❌
-            </label>
-        </div>
-
-        <input type="text" id="username" placeholder="請輸入您的專屬代碼">
-        <button onclick="handleLogin()">登入</button>
-        <div class="error-message" id="error-message"></div>
-    </div>
-
-    <div class="main-content hidden" id="main-content">
-        <div class="brand-header"><h2>🎉 認證成功 🎉</h2></div>
-        <div class="letter-section">
-            <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
-            <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
-            <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，也會想到我們一起做過的那些蠢事</div>
-            <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
-            <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
-        </div>
-        <div class="award-section"><h3>🏆 您的專屬獎狀 🏆</h3><img id="award-image" src=""></div>
-    </div>
-
-    <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
-
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-    <script>
-        const userData = {
-            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
-            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
-            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
-        };
-
-        function handleLogin() {
-            const errorDiv = document.getElementById("error-message");
-            const isYes = document.getElementById("beauty-yes").checked;
-            const isNo = document.getElementById("beauty-no").checked;
-
-            // 檢查有沒有勾選「大美女」
-            if (!isYes && !isNo) {
-                errorDiv.innerText = "❌ 請先回答上面的問題才能登入！";
-                return;
-            }
-            if (isNo) {
-                errorDiv.innerText = "❌ 答錯了！請承認邱馨霈是大美女才能登入！😤";
-                return;
-            }
-
-            // 通過美女驗證後，才進到原本的代碼驗證
-            const val = document.getElementById("username").value.trim();
-            if (userData[val]) {
-                document.getElementById("award-image").src = userData[val];
-                document.getElementById("login-card").classList.add("hidden");
-                document.getElementById("main-content").classList.remove("hidden");
-                
-                // 登入成功，音樂直接播放！
-                document.getElementById("bgm").play().catch(function(error) {
-                    console.log("播放被瀏覽器攔截", error);
-                });
-
-                // 蹦！滿螢幕的彩色紙屑噴發
-                confetti({
-                    particleCount: 150,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
-                
-            } else {
-                errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
-            }
-        }
-    </script>
-</body>
-</html>
+    <div class="
