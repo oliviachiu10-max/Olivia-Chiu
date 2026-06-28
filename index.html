@@ -60,22 +60,22 @@
 
         .score-board { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
         
-        /* 第一關：接食物遊戲 */
+        /* 第一關：大胃羊 */
         #catchCanvas { background: #eef5f9; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
-        /* 第二關：小恐龍 */
+        /* 第二關：跳跳羊 */
         #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第三關：記憶翻牌 */
+        /* 第三關：真假羊羊 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 300px; }
         .grid-card { height: 90px; background: #203a43; border-radius: 8px; font-size: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; transition: background 0.3s, transform 0.2s; color: transparent; }
         .grid-card.flipped { background: #fff; border: 2px solid #203a43; color: initial; transform: rotateY(180deg); }
         .grid-card.matched { background: #e6b422; border: 2px solid #e6b422; color: initial; cursor: default; }
 
-        /* 第四關：節奏遊戲 */
+        /* 第四關：抓癢還是抓羊 */
         #rhythmCanvas { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第五關：猜拳 */
+        /* 第五關：羊羊拳 */
         .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
         .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
     </style>
@@ -99,7 +99,7 @@
     </div>
 
     <div class="card hidden" id="catch-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：羊羊大胃王 🍎</h2>
+        <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：大胃羊</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個綠色蔬菜！</p>
         <p style="color: #ff4d4f; font-size: 12px; margin-bottom: 10px;">⚠️ 注意：接到高熱量垃圾食物會扣分喔！</p>
         <div class="score-board">已吃到健康蔬菜: <span id="catch-score">0</span> / 5</div>
@@ -107,7 +107,7 @@
     </div>
 
     <div class="card hidden" id="dino-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">🐏 第二關：羊羊向前衝 🌵</h2>
+        <h2 style="color: #333; margin-bottom: 5px;">🐏 第二關：跳跳羊 🌵</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 15px;">達到 <span style="color: #ff4081; font-weight: bold;">200 分</span> 解鎖下一關！</p>
         <div class="score-board">目前分數: <span id="score">0</span> / 200</div>
         <canvas id="gameCanvas" width="400" height="150"></canvas>
@@ -116,13 +116,13 @@
     </div>
 
     <div class="card hidden" id="memory-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">🧩 第三關：翻牌對對碰 🧩</h2>
+        <h2 style="color: #333; margin-bottom: 5px;">🧩 第三關：真假羊羊 🧩</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 15px;">找出三對相同的圖案就能進入下一關！</p>
         <div class="grid" id="texture-grid"></div>
     </div>
 
     <div class="card hidden" id="quiz-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">🎵 第四關：羊羊節奏大師 🎵</h2>
+        <h2 style="color: #333; margin-bottom: 5px;">🚧 第四關：抓癢還是抓羊 🚧</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 10px;">當音符(🌟)滾入左側黃圈時，點擊按鈕或按空白鍵！</p>
         <div class="score-board">完美點擊: <span id="rhythm-score">0</span> / 5</div>
         <canvas id="rhythmCanvas" width="360" height="100"></canvas>
@@ -131,7 +131,7 @@
     </div>
 
     <div class="card hidden" id="rps-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">👊 第五關：戰勝命運之羊 🖐️</h2>
+        <h2 style="color: #333; margin-bottom: 5px;">👊 第五關：羊羊拳 🖐️</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 15px;">跟關主小羊猜拳，贏了就能抱走大獎！</p>
         <div style="font-size: 50px; margin: 20px 0;" id="rps-status">🐑 VS ❓</div>
         <div id="rps-result" style="font-weight: bold; color: #cd9b1d; margin-bottom: 15px;">準備好就出拳吧！</div>
