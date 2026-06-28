@@ -28,64 +28,85 @@
     </style>
 </head>
 <body>
-    <div id="login-card" class="card">
-        <div class="brand-header"><h2>🔐 SYSTEM LOGIN</h2><p>羊羊家族高二回顧系統</p></div>
-        <div class="input-group">
-            <label for="username">請輸入您的驗證憑證</label>
-            <input type="text" id="username" placeholder="卡片上的代碼 ">
+    <div class="login-card" id="login-card">
+        <h2>身分認證系统 🌟</h2>
+        
+        <div style="margin-bottom: 20px; background: rgba(255,192,203,0.3); padding: 12px; border-radius: 8px;">
+            <p style="font-weight: bold; margin-bottom: 10px; color: #d81b60;">你邱馨霈是大美女嗎？</p>
+            <label style="margin-right: 15px; cursor: pointer;">
+                <input type="radio" name="beauty-check" value="yes" id="beauty-yes"> 是 😍
+            </label>
+            <label style="cursor: pointer;">
+                <input type="radio" name="beauty-check" value="no" id="beauty-no"> 否 ❌
+            </label>
         </div>
-        <button onclick="handleLogin()">安全驗證並登入</button>
-        <p id="error-message" class="error-text"></p>
+
+        <input type="text" id="username" placeholder="請輸入您的專屬代碼">
+        <button onclick="handleLogin()">登入</button>
+        <div class="error-message" id="error-message"></div>
     </div>
 
-    <div id="main-content" class="card hidden">
-        <div class="brand-header"><h2>🐑 認證成功 羊羊您好 🐑</h2></div>
+    <div class="main-content hidden" id="main-content">
+        <div class="brand-header"><h2>🎉 認證成功 🎉</h2></div>
         <div class="letter-section">
-            <div class="fade-in"> 雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
+            <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
             <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
             <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，也會想到我們一起做過的那些蠢事</div>
-            <div class="fade-in delay-3">總之因為有你們 我的高二過得很多采多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
+            <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
             <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
         </div>
-        <div class="award-section"><h3>🏆 您的羊羊專屬獎狀 🏆</h3><img id="award-image" src=""></div>
+        <div class="award-section"><h3>🏆 您的專屬獎狀 🏆</h3><img id="award-image" src=""></div>
     </div>
 
-   <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
+    <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
 
-<!-- 引入免費的彩色紙屑特效庫 -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<script>
-    const userData = {
-        "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
-        "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
-        "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
-    };
+    <script>
+        const userData = {
+            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
+            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
+            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
+        };
 
-    function handleLogin() {
-        const val = document.getElementById("username").value.trim();
-        if (userData[val]) {
-            document.getElementById("award-image").src = userData[val];
-            document.getElementById("login-card").classList.add("hidden");
-            document.getElementById("main-content").classList.remove("hidden");
-            
-            // 登入成功，音樂直接播放！
-            document.getElementById("bgm").play().catch(function(error) {
-                console.log("播放被瀏覽器攔截", error);
-            });
+        function handleLogin() {
+            const errorDiv = document.getElementById("error-message");
+            const isYes = document.getElementById("beauty-yes").checked;
+            const isNo = document.getElementById("beauty-no").checked;
 
-            // ---- 加上這行：蹦！滿螢幕的彩色紙屑噴發 ----
-            confetti({
-                particleCount: 150, // 紙屑數量
-                spread: 80,         // 噴發角度範圍
-                origin: { y: 0.6 }  // 從螢幕偏下方噴出來
-            });
-            // ----------------------------------------
-            
-        } else {
-            document.getElementById("error-message").innerText = "❌ 認證失敗：資料庫查無此使用者。";
+            // 檢查有沒有勾選「大美女」
+            if (!isYes && !isNo) {
+                errorDiv.innerText = "❌ 請先回答上面的問題才能登入！";
+                return;
+            }
+            if (isNo) {
+                errorDiv.innerText = "❌ 答錯了！請承認邱馨霈是大美女才能登入！😤";
+                return;
+            }
+
+            // 通過美女驗證後，才進到原本的代碼驗證
+            const val = document.getElementById("username").value.trim();
+            if (userData[val]) {
+                document.getElementById("award-image").src = userData[val];
+                document.getElementById("login-card").classList.add("hidden");
+                document.getElementById("main-content").classList.remove("hidden");
+                
+                // 登入成功，音樂直接播放！
+                document.getElementById("bgm").play().catch(function(error) {
+                    console.log("播放被瀏覽器攔截", error);
+                });
+
+                // 蹦！滿螢幕的彩色紙屑噴發
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+                
+            } else {
+                errorDiv.innerText = "❌ 認證失敗：資料庫查無此使用者。";
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
