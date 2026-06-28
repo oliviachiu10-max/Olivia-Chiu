@@ -50,22 +50,30 @@
         <div class="award-section"><h3>🏆 您的羊羊專屬獎狀 🏆</h3><img id="award-image" src=""></div>
     </div>
 
-    <script>
-        const userData = {
-            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png", 
-            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png", 
-            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png", 
-        };
-        function handleLogin() {
-            const val = document.getElementById("username").value.trim();
-            if (userData[val]) {
-                document.getElementById("award-image").src = userData[val];
-                document.getElementById("login-card").classList.add("hidden");
-                document.getElementById("main-content").classList.remove("hidden");
-            } else {
-                document.getElementById("error-message").innerText = "❌ 認證失敗：資料庫查無此使用者。";
-            }
+   <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
+
+<script>
+    const userData = {
+        "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
+        "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
+        "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
+    };
+
+    function handleLogin() {
+        const val = document.getElementById("username").value.trim();
+        if (userData[val]) {
+            document.getElementById("award-image").src = userData[val];
+            document.getElementById("login-card").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            
+            // 登入成功，音樂直接播放！
+            document.getElementById("bgm").play().catch(function(error) {
+                console.log("播放被瀏覽器攔截", error);
+            });
+        } else {
+            document.getElementById("error-message").innerText = "❌ 認證失敗：資料庫查無此使用者。";
         }
-    </script>
+    }
+</script>
 </body>
 </html>
