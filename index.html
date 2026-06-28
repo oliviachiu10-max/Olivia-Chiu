@@ -72,6 +72,9 @@
         .grid-card.flipped { background: #fff; border: 2px solid #203a43; color: initial; transform: rotateY(180deg); }
         .grid-card.matched { background: #e6b422; border: 2px solid #e6b422; color: initial; cursor: default; }
 
+        /* 第四關：節奏遊戲 */
+        #rhythmCanvas { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
+
         /* 第五關：猜拳 */
         .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
         .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
@@ -97,9 +100,9 @@
 
     <div class="card hidden" id="catch-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：羊羊大胃王 🍎</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個水果！</p>
-        <p style="color: #ff4d4f; font-size: 12px; margin-bottom: 10px;">⚠️ 注意：接到炸彈 (💣) 會扣分喔！</p>
-        <div class="score-board">已吃到水果: <span id="catch-score">0</span> / 5</div>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個綠色蔬菜！</p>
+        <p style="color: #ff4d4f; font-size: 12px; margin-bottom: 10px;">⚠️ 注意：接到高熱量垃圾食物會扣分喔！</p>
+        <div class="score-board">已吃到健康蔬菜: <span id="catch-score">0</span> / 5</div>
         <canvas id="catchCanvas" width="320" height="250"></canvas>
     </div>
 
@@ -119,10 +122,12 @@
     </div>
 
     <div class="card hidden" id="quiz-stage">
-        <h2 style="color: #333; margin-bottom: 5px;">📝 第四關：羊羊腦筋急轉彎 📝</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 20px;" id="quiz-question">題目載入中...</p>
-        <div id="quiz-options"></div>
-        <div class="error-message" id="quiz-error"></div>
+        <h2 style="color: #333; margin-bottom: 5px;">🎵 第四關：羊羊節奏大師 🎵</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">當音符(🌟)滾入左側黃圈時，點擊按鈕或按空白鍵！</p>
+        <div class="score-board">完美點擊: <span id="rhythm-score">0</span> / 5</div>
+        <canvas id="rhythmCanvas" width="360" height="100"></canvas>
+        <button id="rhythm-hit-btn" onclick="hitNote()" style="background: #e6b422; color: #1a1a1a; font-size: 18px;">🔥 就是現在！點擊！ 🔥</button>
+        <div id="rhythm-feedback" style="font-weight: bold; height: 20px; color: #ff4081;"></div>
     </div>
 
     <div class="card hidden" id="rps-stage">
@@ -142,7 +147,7 @@
         <div class="letter-section">
             <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
             <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
-            <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，也會想到我們一起做過的那些蠢事</div>
+            <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，會想到我們一起做過的那些蠢事</div>
             <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
             <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
         </div>
@@ -205,12 +210,9 @@
 
         function catchGameLoop() {
             cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-            
-            // 繪製接食物的羊
             cCtx.font = "30px sans-serif";
             cCtx.fillText("🐏", sheepX, 220);
 
-            // 隨機產生食物或炸彈
             if (Math.random() < 0.03) {
                 const types = ["🍕", "🍔", "🍟", "🥬"];
                 const t = types[Math.floor(Math.random() * types.length)];
@@ -221,9 +223,8 @@
                 items[i].y += 3;
                 cCtx.fillText(items[i].type, items[i].x, items[i].y);
 
-                // 判斷接到
                 if (items[i].y >= 200 && items[i].y <= 230 && items[i].x >= sheepX - 15 && items[i].x <= sheepX + 30) {
-                    if (items[i].type === "🍕", "🍔", "🍟") {
+                    if (["🍕", "🍔", "🍟"].includes(items[i].type)) {
                         catchScore = Math.max(0, catchScore - 1);
                     } else {
                         catchScore++;
@@ -346,7 +347,7 @@
                     setTimeout(() => {
                         document.getElementById("memory-stage").classList.add("hidden");
                         document.getElementById("quiz-stage").classList.remove("hidden");
-                        initQuiz();
+                        initRhythmGame();
                     }, 600);
                 }
             } else {
@@ -354,44 +355,90 @@
             }
         }
 
-        // --- 第四關：羊羊快問快答 ---
-        const quizData = [
-            { q: "請問「羊咩咩」最喜歡一邊跳舞一邊吃什麼？", a: ["", "小雞麵", "珍輕鬆", "無尾熊餅乾"], ans: 2 },
-            { q: "當你對著一隻羊大喊「咩～～」，牠心裡通常在想什麼？", a: ["這人類好有禮貌", "這人怪怪的，報警喔", "牠在學我說話嗎？", "你有帶食物嗎？"], ans: 1 }
-        ];
-        let currentQuizIndex = 0;
+        // --- 全新第四關：羊羊節奏音樂核心 ---
+        const rCanvas = document.getElementById("rhythmCanvas");
+        const rCtx = rCanvas.getContext("2d");
+        let rhythmScore, notes, rhythmGameId;
+        const targetX = 50; // 判定圈圈的位置
 
-        function initQuiz() {
-            currentQuizIndex = 0;
-            showQuiz();
+        function initRhythmGame() {
+            rhythmScore = 0; notes = [];
+            document.getElementById("rhythm-score").innerText = rhythmScore;
+            document.getElementById("rhythm-feedback").innerText = "";
+            
+            // 監聽鍵盤空白鍵也能打擊
+            window.addEventListener("keydown", handleRhythmKey);
+            rhythmLoop();
         }
 
-        function showQuiz() {
-            document.getElementById("quiz-error").innerText = "";
-            const current = quizData[currentQuizIndex];
-            document.getElementById("quiz-question").innerText = `(${currentQuizIndex+1}/2) ${current.q}`;
-            const optionsDiv = document.getElementById("quiz-options");
-            optionsDiv.innerHTML = "";
-            current.a.forEach((opt, idx) => {
-                const btn = document.createElement("button");
-                btn.innerText = opt;
-                btn.onclick = () => checkQuizAnswer(idx);
-                optionsDiv.appendChild(btn);
-            });
-        }
-
-        function checkQuizAnswer(idx) {
-            if (idx === quizData[currentQuizIndex].ans) {
-                currentQuizIndex++;
-                if (currentQuizIndex < quizData.length) {
-                    showQuiz();
-                } else {
-                    document.getElementById("quiz-stage").classList.add("hidden");
-                    document.getElementById("rps-stage").classList.remove("hidden");
-                }
-            } else {
-                document.getElementById("quiz-error").innerText = "❌ 答錯了！小羊用鄙視的眼神看著妳，再猜一次！";
+        function handleRhythmKey(e) {
+            if(e.code === "Space") {
+                e.preventDefault();
+                hitNote();
             }
+        }
+
+        function hitNote() {
+            let hitSuccess = false;
+            for (let i = 0; i < notes.length; i++) {
+                // 計算音符與目標判定圈的距離
+                let distance = Math.abs(notes[i].x - targetX);
+                if (distance < 25) { // 進入判定範圍
+                    hitSuccess = true;
+                    notes.splice(i, 1);
+                    rhythmScore++;
+                    document.getElementById("rhythm-score").innerText = rhythmScore;
+                    document.getElementById("rhythm-feedback").innerText = "✨ PERFECT! ✨";
+                    document.getElementById("rhythm-feedback").style.color = "#e6b422";
+                    
+                    if (rhythmScore >= 5) {
+                        cancelAnimationFrame(rhythmGameId);
+                        window.removeEventListener("keydown", handleRhythmKey);
+                        setTimeout(() => {
+                            document.getElementById("quiz-stage").classList.add("hidden");
+                            document.getElementById("rps-stage").classList.remove("hidden");
+                        }, 500);
+                    }
+                    break;
+                }
+            }
+            if (!hitSuccess) {
+                document.getElementById("rhythm-feedback").innerText = "❌ MISS! ❌";
+                document.getElementById("rhythm-feedback").style.color = "#ff4d4f";
+            }
+        }
+
+        function rhythmLoop() {
+            rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
+
+            // 繪製判定線與外圈圈
+            rCtx.strokeStyle = "#e6b422";
+            rCtx.lineWidth = 3;
+            rCtx.beginPath();
+            rCtx.arc(targetX, 50, 20, 0, Math.PI * 2);
+            rCtx.stroke();
+
+            // 隨機產生向左滾動的星星音符
+            if (Math.random() < 0.02 && (notes.length === 0 || rCanvas.width - notes[notes.length-1].x > 100)) {
+                notes.push({ x: rCanvas.width, y: 50 });
+            }
+
+            // 移動並繪製音符
+            rCtx.font = "24px sans-serif";
+            rCtx.textBaseline = "middle";
+            for (let i = notes.length - 1; i >= 0; i--) {
+                notes[i].x -= 3; // 移动速度
+                rCtx.fillText("🌟", notes[i].x - 12, notes[i].y);
+
+                // 超出邊界代表漏掉
+                if (notes[i].x < 10) {
+                    notes.splice(i, 1);
+                    document.getElementById("rhythm-feedback").innerText = "❌ MISS! ❌";
+                    document.getElementById("rhythm-feedback").style.color = "#ff4d4f";
+                }
+            }
+
+            rhythmGameId = requestAnimationFrame(rhythmLoop);
         }
 
         // --- 第五關：命運猜拳 ---
