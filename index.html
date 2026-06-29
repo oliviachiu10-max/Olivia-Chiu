@@ -35,7 +35,6 @@
         #rps-stage.card { max-width: 450px; }
         #main-content.card { max-width: 750px; }
         #bonus-stage.card { max-width: 500px; }
-        #gallery-stage.card { max-width: 750px; }
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
         
@@ -83,11 +82,6 @@
 
         /* 彩蛋個人關卡畫布 */
         #bonusCanvas { background: #ffffff; border: 2px solid #203a43; border-radius: 12px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
-
-        /* 照片牆設計 */
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
-        .photo-card { background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .photo-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -164,7 +158,7 @@
         <div class="award-section">
             <h3>🏆 您的羊羊專屬獎狀 🏆</h3>
             <img id="award-image" src="">
-            <button id="learn-more-btn" onclick="openBonusStage()" style="margin-top: 25px; background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">✨ 點選了解更多驚喜 ✨</button>
+            <button id="learn-more-btn" onclick="openBonusStage()" style="margin-top: 25px; background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">✨ 點選解鎖更多驚喜 ✨</button>
         </div>
     </div>
 
@@ -176,13 +170,6 @@
         <canvas id="bonusCanvas" width="360" height="300"></canvas>
     </div>
 
-    <!-- 12張照片展示牆 -->
-    <div class="card hidden" id="gallery-stage">
-        <h2 style="color: #cd9b1d; margin-bottom: 5px;">📸 恭喜通關！羊羊家族珍貴回憶牆 📸</h2>
-        <p style="color: #666; font-size: 14px;">點滴回憶都在這裡，祝我們的友情長長久久！✨</p>
-        <div class="photo-grid" id="photoGallery"></div>
-    </div>
-
     <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -192,22 +179,6 @@
             "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",    // 彭靖妤
             "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"     // 蕭羽芯
         };
-
-        const sharedPhotos = [
-            "https://i.postimg.cc/HnWhvNgg/retro-6C372E28-0D8F-4C8B-8B2A-50F864ACF32A.jpg",
-            "https://i.postimg.cc/2SLXtvPz/IMG-5833.jpg",
-            "https://i.postimg.cc/J422KKdn/IMG-0426.jpg",
-            "https://i.postimg.cc/DyMM55Y2/IMG-9225.jpg",
-            "https://i.postimg.cc/TY44QQHf/IMG-9756.jpg",
-            "https://i.postimg.cc/4xHF0tlT/retro-91C31571-5536-4BCA-900A-27FDDA892595.jpg",
-            "https://i.postimg.cc/65mmzz1s/retro-1FC06332-4DDE-425A-A7CE-8CFFDA35E687.jpg",
-            "https://i.postimg.cc/sgG0LStD/IMG-5520.jpg",
-            "https://i.postimg.cc/K83sWLdF/IMG-3898.jpg",
-            "https://i.postimg.cc/4xHF0trs/original-2026-06-02-16033183705B694CD3.jpg",
-            "https://i.postimg.cc/T35HsmZx/retro-9F9D4EA1-2588-4834-89B2-A0C9118974DD.jpg",
-            "https://i.postimg.cc/2SLXtvPz/IMG-5833.jpg"
-        ];
-
 
         let currentUser = "";
         let savedImageSrc = "";
@@ -641,24 +612,14 @@
             if (bonusScore >= 5) {
                 bonusActive = false;
                 cancelAnimationFrame(bonusGameId);
-                confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
+                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
                 setTimeout(() => {
                     document.getElementById("bonus-stage").classList.add("hidden");
-                    document.getElementById("gallery-stage").classList.remove("hidden");
-                    renderGallery();
+                    document.getElementById("main-content").classList.remove("hidden");
+                    // 隱藏進入彩蛋的按鈕，讓畫面停留在純粹的感謝和專屬獎狀
+                    document.getElementById("learn-more-btn").classList.add("hidden");
                 }, 800);
             }
-        }
-
-        function renderGallery() {
-            const galleryDiv = document.getElementById("photoGallery");
-            galleryDiv.innerHTML = "";
-            sharedPhotos.forEach(url => {
-                const pCard = document.createElement("div");
-                pCard.classList.add("photo-card");
-                pCard.innerHTML = `<img src="${url}" alt="羊羊家族回憶點滴">`;
-                galleryDiv.appendChild(pCard);
-            });
         }
     </script>
 </body>
