@@ -34,6 +34,8 @@
         #quiz-stage.card { max-width: 450px; }
         #rps-stage.card { max-width: 450px; }
         #main-content.card { max-width: 750px; }
+        #bonus-stage.card { max-width: 500px; }
+        #gallery-stage.card { max-width: 750px; }
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
         
@@ -60,24 +62,32 @@
 
         .score-board { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
         
-        /* 第一關：大胃羊 */
+        /* 第一關 */
         #catchCanvas { background: #eef5f9; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
-        /* 第二關：跳跳羊 */
+        /* 第二關 */
         #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第三關：真假羊羊 */
+        /* 第三關 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 300px; }
         .grid-card { height: 90px; background: #203a43; border-radius: 8px; font-size: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; transition: background 0.3s, transform 0.2s; color: transparent; }
         .grid-card.flipped { background: #fff; border: 2px solid #203a43; color: initial; transform: rotateY(180deg); }
         .grid-card.matched { background: #e6b422; border: 2px solid #e6b422; color: initial; cursor: default; }
 
-        /* 第四關：抓癢還是抓羊 */
+        /* 第四關 */
         #rhythmCanvas { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第五關：羊羊拳 */
+        /* 第五關 */
         .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
         .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
+
+        /* 彩蛋個人關卡畫布 */
+        #bonusCanvas { background: #ffffff; border: 2px solid #203a43; border-radius: 12px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
+
+        /* 照片牆設計 */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .photo-card { background: white; padding: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .photo-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -151,7 +161,24 @@
             <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
             <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
         </div>
-        <div class="award-section"><h3>🏆 您的羊羊專屬獎狀 🏆</h3><img id="award-image" src=""></div>
+        <div class="award-section">
+            <h3>🏆 您的羊羊專屬獎狀 🏆</h3>
+            <img id="award-image" src="">
+            <button id="learn-more-btn" onclick="openBonusStage()" style="margin-top: 25px; background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">✨ 點選了解更多驚喜 ✨</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="bonus-stage">
+        <h2 id="bonus-title" style="color: #333; margin-bottom: 5px;">🎁 專屬彩蛋關卡 🎁</h2>
+        <p id="bonus-desc" style="color: #666; font-size: 14px; margin-bottom: 15px;">載入中...</p>
+        <div class="score-board">成功解鎖進度: <span id="bonus-score">0</span> / 5</div>
+        <canvas id="bonusCanvas" width="360" height="300"></canvas>
+    </div>
+
+    <div class="card hidden" id="gallery-stage">
+        <h2 style="color: #cd9b1d; margin-bottom: 5px;">📸 恭喜通關！羊羊家族珍貴回憶牆 📸</h2>
+        <p style="color: #666; font-size: 14px;">點滴回憶都在這裡，祝我們的友情長長久久！✨</p>
+        <div class="photo-grid" id="photoGallery"></div>
     </div>
 
     <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
@@ -159,11 +186,28 @@
 
     <script>
         const userData = {
-            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
-            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
-            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
+            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png", // 陳羿蓁
+            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",    // 彭靖妤
+            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"     // 蕭羽芯
         };
 
+        // 這裡放妳準備好的12張一樣的照片網址（直接把下面的連結替換掉即可）
+        const sharedPhotos = [
+            "https://picsum.photos/400/400?random=1",
+            "https://picsum.photos/400/400?random=2",
+            "https://picsum.photos/400/400?random=3",
+            "https://picsum.photos/400/400?random=4",
+            "https://picsum.photos/400/400?random=5",
+            "https://picsum.photos/400/400?random=6",
+            "https://picsum.photos/400/400?random=7",
+            "https://picsum.photos/400/400?random=8",
+            "https://picsum.photos/400/400?random=9",
+            "https://picsum.photos/400/400?random=10",
+            "https://picsum.photos/400/400?random=11",
+            "https://picsum.photos/400/400?random=12"
+        ];
+
+        let currentUser = "";
         let savedImageSrc = "";
 
         function handleLogin() {
@@ -176,6 +220,7 @@
 
             const val = document.getElementById("username").value.trim();
             if (userData[val]) {
+                currentUser = val; // 紀錄當前是誰登入
                 savedImageSrc = userData[val];
                 document.getElementById("login-card").classList.add("hidden");
                 document.getElementById("catch-stage").classList.remove("hidden");
@@ -204,7 +249,6 @@
                 const rect = cCanvas.getBoundingClientRect();
                 sheepX = e.touches[0].clientX - rect.left - 20;
             });
-
             catchGameLoop();
         }
 
@@ -355,35 +399,29 @@
             }
         }
 
-        // --- 全新第四關：羊羊節奏音樂核心 ---
+        // --- 第四關：羊羊節奏音樂核心 ---
         const rCanvas = document.getElementById("rhythmCanvas");
         const rCtx = rCanvas.getContext("2d");
         let rhythmScore, notes, rhythmGameId;
-        const targetX = 50; // 判定圈圈的位置
+        const targetX = 50;
 
         function initRhythmGame() {
             rhythmScore = 0; notes = [];
             document.getElementById("rhythm-score").innerText = rhythmScore;
             document.getElementById("rhythm-feedback").innerText = "";
-            
-            // 監聽鍵盤空白鍵也能打擊
             window.addEventListener("keydown", handleRhythmKey);
             rhythmLoop();
         }
 
         function handleRhythmKey(e) {
-            if(e.code === "Space") {
-                e.preventDefault();
-                hitNote();
-            }
+            if(e.code === "Space") { e.preventDefault(); hitNote(); }
         }
 
         function hitNote() {
             let hitSuccess = false;
             for (let i = 0; i < notes.length; i++) {
-                // 計算音符與目標判定圈的距離
                 let distance = Math.abs(notes[i].x - targetX);
-                if (distance < 25) { // 進入判定範圍
+                if (distance < 25) {
                     hitSuccess = true;
                     notes.splice(i, 1);
                     rhythmScore++;
@@ -410,34 +448,21 @@
 
         function rhythmLoop() {
             rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
+            rCtx.strokeStyle = "#e6b422"; rCtx.lineWidth = 3; rCtx.beginPath(); rCtx.arc(targetX, 50, 20, 0, Math.PI * 2); rCtx.stroke();
 
-            // 繪製判定線與外圈圈
-            rCtx.strokeStyle = "#e6b422";
-            rCtx.lineWidth = 3;
-            rCtx.beginPath();
-            rCtx.arc(targetX, 50, 20, 0, Math.PI * 2);
-            rCtx.stroke();
-
-            // 隨機產生向左滾動的星星音符
             if (Math.random() < 0.02 && (notes.length === 0 || rCanvas.width - notes[notes.length-1].x > 100)) {
                 notes.push({ x: rCanvas.width, y: 50 });
             }
 
-            // 移動並繪製音符
-            rCtx.font = "24px sans-serif";
-            rCtx.textBaseline = "middle";
+            rCtx.font = "24px sans-serif"; rCtx.textBaseline = "middle";
             for (let i = notes.length - 1; i >= 0; i--) {
-                notes[i].x -= 3; // 移动速度
-                rCtx.fillText("🐑", notes[i].x - 12, notes[i].y);
-
-                // 超出邊界代表漏掉
+                notes[i].x -= 3; rCtx.fillText("🐑", notes[i].x - 12, notes[i].y);
                 if (notes[i].x < 10) {
                     notes.splice(i, 1);
                     document.getElementById("rhythm-feedback").innerText = "❌ MISS! ❌";
                     document.getElementById("rhythm-feedback").style.color = "#ff4d4f";
                 }
             }
-
             rhythmGameId = requestAnimationFrame(rhythmLoop);
         }
 
@@ -467,6 +492,205 @@
             document.getElementById("main-content").classList.remove("hidden");
             document.getElementById("bgm").play().catch(err => console.log(err));
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+
+
+        // ==========================================
+        //       🌟 額外隱藏彩蛋專屬關卡邏輯 🌟
+        // ==========================================
+        const bCanvas = document.getElementById("bonusCanvas");
+        const bCtx = bCanvas.getContext("2d");
+        let bonusScore = 0;
+        let bonusGameId;
+        let bonusItems = [];
+        let playerX = 140; // 專屬於彭靖妤接鑽石的下方擋板
+        let bonusActive = true;
+
+        function openBonusStage() {
+            document.getElementById("main-content").classList.add("hidden");
+            document.getElementById("bonus-stage").classList.remove("hidden");
+            bonusScore = 0;
+            bonusItems = [];
+            bonusActive = true;
+            document.getElementById("bonus-score").innerText = bonusScore;
+
+            // 依照使用者帳號切換標題、說明與遊戲類型
+            if (currentUser === "chrieodncg") { // 陳羿蓁 🎹
+                document.getElementById("bonus-title").innerText = "🎹 羿蓁的鋼琴別踩白塊兒 🎹";
+                document.getElementById("bonus-desc").innerText = "點擊畫面中掉落下來的黑色鋼琴磚，集滿 5 次完美彈奏！";
+                initPianoGame();
+            } else if (currentUser === "dbdithrbtk") { // 彭靖妤 💍
+                document.getElementById("bonus-title").innerText = "💍 靖妤的璀璨鑽石接接樂 💍";
+                document.getElementById("bonus-desc").innerText = "移動滑鼠或滑動手指，用托盤接住 5 顆掉落的閃亮鑽石！";
+                initDiamondGame();
+            } else if (currentUser === "guvpwnwguq") { // 蕭羽芯 🧧
+                document.getElementById("bonus-title").innerText = "🧧 羽芯的幸運紅包大亂抓 🧧";
+                document.getElementById("bonus-desc").innerText = "紅包在到處亂飛！用妳單身多年的手速，在畫面上點擊抓到它 5 次！";
+                initRedEnvelopeGame();
+            }
+        }
+
+        // 一、陳羿蓁 🎹 鋼琴塊遊戲
+        function initPianoGame() {
+            bCanvas.onclick = function(e) {
+                const rect = bCanvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                for(let i=0; i<bonusItems.length; i++) {
+                    let item = bonusItems[i];
+                    if (clickX >= item.x && clickX <= item.x + 60 && clickY >= item.y && clickY <= item.y + 80) {
+                        bonusItems.splice(i, 1);
+                        updateBonusScore();
+                        break;
+                    }
+                }
+            };
+            pianoLoop();
+        }
+
+        function pianoLoop() {
+            if(!bonusActive) return;
+            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+            
+            // 畫四條鋼琴軌道線
+            bCtx.strokeStyle = "#ddd"; bCtx.lineWidth = 1;
+            for(let i=1; i<=3; i++) {
+                bCtx.beginPath(); bCtx.moveTo(i * 90, 0); bCtx.lineTo(i * 90, bCanvas.height); bCtx.stroke();
+            }
+
+            // 生成鋼琴塊
+            if (Math.random() < 0.02 && bonusItems.length < 3) {
+                const lane = Math.floor(Math.random() * 4);
+                bonusItems.push({ x: lane * 90 + 15, y: -80, speed: 3 });
+            }
+
+            // 繪製與移動
+            for(let i=bonusItems.length-1; i>=0; i--) {
+                bonusItems[i].y += bonusItems[i].speed;
+                bCtx.fillStyle = "#1a1a1a";
+                bCtx.fillRect(bonusItems[i].x, bonusItems[i].y, 60, 80);
+                
+                // 順便畫個琴鍵圖示
+                bCtx.font = "20px sans-serif";
+                bCtx.fillText("🎹", bonusItems[i].x + 18, bonusItems[i].y + 45);
+
+                if (bonusItems[i].y > bCanvas.height) bonusItems.splice(i, 1);
+            }
+            bonusGameId = requestAnimationFrame(pianoLoop);
+        }
+
+        // 二、彭靖妤 💍 鑽石接物遊戲
+        function initDiamondGame() {
+            bCanvas.onmousemove = function(e) {
+                const rect = bCanvas.getBoundingClientRect();
+                playerX = e.clientX - rect.left - 40;
+            };
+            bCanvas.ontouchmove = function(e) {
+                const rect = bCanvas.getBoundingClientRect();
+                playerX = e.touches[0].clientX - rect.left - 40;
+            };
+            diamondLoop();
+        }
+
+        function diamondLoop() {
+            if(!bonusActive) return;
+            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+
+            // 繪製承接盤子
+            bCtx.fillStyle = "#203a43";
+            bCtx.fillRect(playerX, 270, 80, 15);
+
+            if (Math.random() < 0.03) {
+                bonusItems.push({ x: Math.random() * (bCanvas.width - 30), y: 0, speed: 3 });
+            }
+
+            for(let i=bonusItems.length-1; i>=0; i--) {
+                bonusItems[i].y += bonusItems[i].speed;
+                bCtx.font = "26px sans-serif";
+                bCtx.fillText("💍", bonusItems[i].x, bonusItems[i].y);
+
+                // 碰撞偵測
+                if (bonusItems[i].y >= 250 && bonusItems[i].y <= 275 && bonusItems[i].x >= playerX - 10 && bonusItems[i].x <= playerX + 75) {
+                    bonusItems.splice(i, 1);
+                    updateBonusScore();
+                    continue;
+                }
+                if (bonusItems[i].y > bCanvas.height) bonusItems.splice(i, 1);
+            }
+            bonusGameId = requestAnimationFrame(diamondLoop);
+        }
+
+        // 三、蕭羽芯 🧧 紅包大亂抓
+        function initRedEnvelopeGame() {
+            // 初始化一個隨機移動的紅包
+            bonusItems = [{ x: 150, y: 120, vx: 3, vy: 2 }];
+            
+            bCanvas.onclick = function(e) {
+                const rect = bCanvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                let item = bonusItems[0];
+                // 點擊判定半徑
+                let dist = Math.sqrt((clickX - item.x)*(clickX - item.x) + (clickY - item.y)*(clickY - item.y));
+                if (dist < 35) {
+                    // 抓到了！重置位置並增加分數
+                    item.x = Math.random() * 280 + 30;
+                    item.y = Math.random() * 220 + 30;
+                    item.vx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
+                    item.vy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
+                    updateBonusScore();
+                }
+            };
+            redEnvelopeLoop();
+        }
+
+        function redEnvelopeLoop() {
+            if(!bonusActive) return;
+            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+
+            let item = bonusItems[0];
+            item.x += item.vx;
+            item.y += item.vy;
+
+            // 邊界碰撞反彈
+            if (item.x < 15 || item.x > bCanvas.width - 25) item.vx *= -1;
+            if (item.y < 25 || item.y > bCanvas.height - 15) item.vy *= -1;
+
+            bCtx.font = "40px sans-serif";
+            bCtx.fillText("🧧", item.x - 20, item.y + 15);
+
+            bonusGameId = requestAnimationFrame(redEnvelopeLoop);
+        }
+
+        // 更新彩蛋分數與檢查通關
+        function updateBonusScore() {
+            bonusScore++;
+            document.getElementById("bonus-score").innerText = bonusScore;
+            if (bonusScore >= 5) {
+                bonusActive = false;
+                cancelAnimationFrame(bonusGameId);
+                confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
+                
+                setTimeout(() => {
+                    document.getElementById("bonus-stage").classList.add("hidden");
+                    document.getElementById("gallery-stage").classList.remove("hidden");
+                    renderGallery();
+                }, 800);
+            }
+        }
+
+        // 渲染12張相簿牆
+        function renderGallery() {
+            const galleryDiv = document.getElementById("photoGallery");
+            galleryDiv.innerHTML = "";
+            sharedPhotos.forEach(url => {
+                const pCard = document.createElement("div");
+                pCard.classList.add("photo-card");
+                pCard.innerHTML = `<img src="${url}" alt="羊羊家族回憶點滴">`;
+                galleryDiv.appendChild(pCard);
+            });
         }
     </script>
 </body>
