@@ -34,7 +34,7 @@
         #quiz-stage.card { max-width: 450px; }
         #rps-stage.card { max-width: 450px; }
         #main-content.card { max-width: 750px; }
-        #bonus-stage.card { max-width: 500px; }
+        #bonus-stage.card { max-width: 750px; } /* 拓寬彩蛋區以便最後展示獎狀 */
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
         
@@ -80,8 +80,10 @@
         .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
         .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
 
-        /* 彩蛋個人關卡畫布 */
-        #bonusCanvas { background: #ffffff; border: 2px solid #203a43; border-radius: 12px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
+        /* 彩蛋 Candy Crush 樣式 */
+        .crush-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px auto; max-width: 280px; background: #eef5f9; padding: 10px; border-radius: 12px; border: 2px solid #203a43; }
+        .crush-block { height: 60px; background: white; border-radius: 8px; font-size: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s; }
+        .crush-block:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -146,6 +148,7 @@
         </div>
     </div>
 
+    <!-- 告白主畫面 (第五關過後先來這裡) -->
     <div class="card hidden" id="main-content">
         <div class="brand-header"><h2>🎉 認證成功 羊羊您好 🐏 🎉</h2></div>
         <div class="letter-section">
@@ -158,16 +161,34 @@
         <div class="award-section">
             <h3>🏆 您的羊羊專屬獎狀 🏆</h3>
             <img id="award-image" src="">
-            <button id="learn-more-btn" onclick="openBonusStage()" style="margin-top: 25px; background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">✨ 點選解鎖更多驚喜 ✨</button>
+            <button id="learn-more-btn" onclick="openBonusStage()" style="margin-top: 25px; background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">✨ 點選解鎖終極彩蛋關卡 ✨</button>
         </div>
     </div>
 
-    <!-- 額外隱藏彩蛋遊戲關卡 -->
+    <!-- 終極 Candy Crush 彩蛋遊戲關卡 (遊戲結束後直接原地面呈現結局) -->
     <div class="card hidden" id="bonus-stage">
-        <h2 id="bonus-title" style="color: #333; margin-bottom: 5px;">🎁 專屬彩蛋關卡 🎁</h2>
-        <p id="bonus-desc" style="color: #666; font-size: 14px; margin-bottom: 15px;">載入中...</p>
-        <div class="score-board">成功解鎖進度: <span id="bonus-score">0</span> / 5</div>
-        <canvas id="bonusCanvas" width="360" height="300"></canvas>
+        <div id="bonus-game-play-area">
+            <h2 style="color: #333; margin-bottom: 5px;">🍬 終極彩蛋：羊羊方塊消消樂 🍬</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">點擊任何一個方塊，只要它<b>上下左右</b>有鄰近的相同圖案，就能一口氣消除它們！</p>
+            <div class="score-board">成功消除次數: <span id="bonus-score">0</span> / 5</div>
+            <div class="crush-grid" id="crush-grid"></div>
+        </div>
+        
+        <!-- 這是最後在原地直接亮出的最終結局區塊 -->
+        <div id="final-destination" class="hidden">
+            <div class="brand-header"><h2 style="color: #203a43; font-size: 26px;">💖 終極大成功！羊羊特製結局 💖</h2></div>
+            <div class="letter-section">
+                <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
+                <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
+                <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，會想到我們一起做過的那些蠢事</div>
+                <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
+                <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
+            </div>
+            <div class="award-section">
+                <h3>🏆 您的專屬永久羊羊榮譽勳章 🏆</h3>
+                <img id="bonus-final-image" src="">
+            </div>
+        </div>
     </div>
 
     <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
@@ -467,159 +488,104 @@
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
 
-        // --- 隱藏彩蛋專屬關卡邏輯 ---
-        const bCanvas = document.getElementById("bonusCanvas");
-        const bCtx = bCanvas.getContext("2d");
+        // --- 終極彩蛋：Candy Crush 消消樂核心 ---
+        const crushIcons = ["🎹", "💍", "🧧", "🐏"];
+        let crushGridSize = 4;
+        let crushGridData = [];
         let bonusScore = 0;
-        let bonusGameId;
-        let bonusItems = [];
-        let playerX = 140;
-        let bonusActive = true;
 
         function openBonusStage() {
             document.getElementById("main-content").classList.add("hidden");
             document.getElementById("bonus-stage").classList.remove("hidden");
             bonusScore = 0;
-            bonusItems = [];
-            bonusActive = true;
             document.getElementById("bonus-score").innerText = bonusScore;
+            generateCrushGrid();
+        }
 
-            if (currentUser === "chrieodncg") {
-                document.getElementById("bonus-title").innerText = "🎹 鋼琴別踩白塊兒 🎹";
-                document.getElementById("bonus-desc").innerText = "點擊畫面中掉落下來的黑色鋼琴磚，集滿 5 次完美彈奏！";
-                initPianoGame();
-            } else if (currentUser === "dbdithrbtk") {
-                document.getElementById("bonus-title").innerText = "💍 手作十克拉璀璨鑽石接接樂 💍";
-                document.getElementById("bonus-desc").innerText = "移動滑鼠或滑動手指，用托盤接住 5 顆掉落的閃亮鑽石！";
-                initDiamondGame();
-            } else if (currentUser === "guvpwnwguq") {
-                document.getElementById("bonus-title").innerText = "🧧 一百萬幸運紅包大亂抓 🧧";
-                document.getElementById("bonus-desc").innerText = "紅包在到處亂飛！快在畫面上點擊抓到它 5 次！";
-                initRedEnvelopeGame();
+        function generateCrushGrid() {
+            const gridEl = document.getElementById("crush-grid");
+            gridEl.innerHTML = "";
+            crushGridData = [];
+            
+            for (let r = 0; r < crushGridSize; r++) {
+                crushGridData[r] = [];
+                for (let c = 0; c < crushGridSize; c++) {
+                    const randomIcon = crushIcons[Math.floor(Math.random() * crushIcons.length)];
+                    crushGridData[r][c] = randomIcon;
+
+                    const block = document.createElement("div");
+                    block.classList.add("crush-block");
+                    block.innerText = randomIcon;
+                    block.dataset.row = r;
+                    block.dataset.col = c;
+                    block.addEventListener("click", handleBlockClick);
+                    gridEl.appendChild(block);
+                }
             }
         }
 
-        // 羿蓁 🎹
-        function initPianoGame() {
-            bCanvas.onclick = function(e) {
-                const rect = bCanvas.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
-                for(let i=0; i<bonusItems.length; i++) {
-                    let item = bonusItems[i];
-                    if (clickX >= item.x && clickX <= item.x + 60 && clickY >= item.y && clickY <= item.y + 80) {
-                        bonusItems.splice(i, 1);
-                        updateBonusScore();
-                        break;
+        function handleBlockClick() {
+            const row = parseInt(this.dataset.row);
+            const col = parseInt(this.dataset.col);
+            const targetIcon = crushGridData[row][col];
+
+            // Flood fill 算法尋找連通塊
+            let matches = [];
+            let queue = [{r: row, c: col}];
+            let visited = Array(crushGridSize).fill().map(() => Array(crushGridSize).fill(false));
+            visited[row][col] = true;
+
+            const dr = [-1, 1, 0, 0];
+            const dc = [0, 0, -1, 1];
+
+            while(queue.length > 0) {
+                let curr = queue.shift();
+                matches.push(curr);
+
+                for(let i=0; i<4; i++) {
+                    let nr = curr.r + dr[i];
+                    let nc = curr.c + dc[i];
+
+                    if(nr >= 0 && nr < crushGridSize && nc >= 0 && nc < crushGridSize) {
+                        if(!visited[nr][nc] && crushGridData[nr][nc] === targetIcon) {
+                            visited[nr][nc] = true;
+                            queue.push({r: nr, c: nc});
+                        }
                     }
                 }
-            };
-            pianoLoop();
-        }
+            }
 
-        function pianoLoop() {
-            if(!bonusActive) return;
-            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            bCtx.strokeStyle = "#ddd"; bCtx.lineWidth = 1;
-            for(let i=1; i<=3; i++) {
-                bCtx.beginPath(); bCtx.moveTo(i * 90, 0); bCtx.lineTo(i * 90, bCanvas.height); bCtx.stroke();
-            }
-            if (Math.random() < 0.02 && bonusItems.length < 3) {
-                const lane = Math.floor(Math.random() * 4);
-                bonusItems.push({ x: lane * 90 + 15, y: -80, speed: 3 });
-            }
-            for(let i=bonusItems.length-1; i>=0; i--) {
-                bonusItems[i].y += bonusItems[i].speed;
-                bCtx.fillStyle = "#1a1a1a";
-                bCtx.fillRect(bonusItems[i].x, bonusItems[i].y, 60, 80);
-                bCtx.font = "20px sans-serif";
-                bCtx.fillText("🎹", bonusItems[i].x + 18, bonusItems[i].y + 45);
-                if (bonusItems[i].y > bCanvas.height) bonusItems.splice(i, 1);
-            }
-            bonusGameId = requestAnimationFrame(pianoLoop);
-        }
+            if (matches.length >= 2) {
+                bonusScore++;
+                document.getElementById("bonus-score").innerText = bonusScore;
 
-        // 靖妤 💍
-        function initDiamondGame() {
-            bCanvas.onmousemove = function(e) {
-                const rect = bCanvas.getBoundingClientRect();
-                playerX = e.clientX - rect.left - 40;
-            };
-            bCanvas.ontouchmove = function(e) {
-                const rect = bCanvas.getBoundingClientRect();
-                playerX = e.touches[0].clientX - rect.left - 40;
-            };
-            diamondLoop();
-        }
+                matches.forEach(pos => {
+                    crushGridData[pos.r][pos.c] = crushIcons[Math.floor(Math.random() * crushIcons.length)];
+                });
 
-        function diamondLoop() {
-            if(!bonusActive) return;
-            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            bCtx.fillStyle = "#203a43";
-            bCtx.fillRect(playerX, 270, 80, 15);
-            if (Math.random() < 0.03) {
-                bonusItems.push({ x: Math.random() * (bCanvas.width - 30), y: 0, speed: 3 });
-            }
-            for(let i=bonusItems.length-1; i>=0; i--) {
-                bonusItems[i].y += bonusItems[i].speed;
-                bCtx.font = "26px sans-serif";
-                bCtx.fillText("💍", bonusItems[i].x, bonusItems[i].y);
-                if (bonusItems[i].y >= 250 && bonusItems[i].y <= 275 && bonusItems[i].x >= playerX - 10 && bonusItems[i].x <= playerX + 75) {
-                    bonusItems.splice(i, 1);
-                    updateBonusScore();
-                    continue;
+                renderCrushGrid();
+
+                // 當收集滿 5 次，直接在原地亮出最終精美結局
+                if (bonusScore >= 5) {
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                    
+                    // 隱藏遊戲操作區
+                    document.getElementById("bonus-game-play-area").classList.add("hidden");
+                    
+                    // 設定並亮出原地的最終告白與獎狀
+                    document.getElementById("bonus-final-image").src = savedImageSrc;
+                    document.getElementById("final-destination").classList.remove("hidden");
                 }
-                if (bonusItems[i].y > bCanvas.height) bonusItems.splice(i, 1);
             }
-            bonusGameId = requestAnimationFrame(diamondLoop);
         }
 
-        // 羽芯 🧧
-        function initRedEnvelopeGame() {
-            bonusItems = [{ x: 150, y: 120, vx: 3, vy: 2 }];
-            bCanvas.onclick = function(e) {
-                const rect = bCanvas.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
-                let item = bonusItems[0];
-                let dist = Math.sqrt((clickX - item.x)*(clickX - item.x) + (clickY - item.y)*(clickY - item.y));
-                if (dist < 35) {
-                    item.x = Math.random() * 280 + 30;
-                    item.y = Math.random() * 220 + 30;
-                    item.vx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
-                    item.vy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3 + 2);
-                    updateBonusScore();
-                }
-            };
-            redEnvelopeLoop();
-        }
-
-        function redEnvelopeLoop() {
-            if(!bonusActive) return;
-            bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
-            let item = bonusItems[0];
-            item.x += item.vx; item.y += item.vy;
-            if (item.x < 15 || item.x > bCanvas.width - 25) item.vx *= -1;
-            if (item.y < 25 || item.y > bCanvas.height - 15) item.vy *= -1;
-            bCtx.font = "40px sans-serif";
-            bCtx.fillText("🧧", item.x - 20, item.y + 15);
-            bonusGameId = requestAnimationFrame(redEnvelopeLoop);
-        }
-
-        function updateBonusScore() {
-            bonusScore++;
-            document.getElementById("bonus-score").innerText = bonusScore;
-            if (bonusScore >= 5) {
-                bonusActive = false;
-                cancelAnimationFrame(bonusGameId);
-                confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-                setTimeout(() => {
-                    document.getElementById("bonus-stage").classList.add("hidden");
-                    document.getElementById("main-content").classList.remove("hidden");
-                    // 隱藏進入彩蛋的按鈕，讓畫面停留在純粹的感謝和專屬獎狀
-                    document.getElementById("learn-more-btn").classList.add("hidden");
-                }, 800);
-            }
+        function renderCrushGrid() {
+            const blocks = document.querySelectorAll(".crush-block");
+            blocks.forEach(block => {
+                const r = block.dataset.row;
+                const c = block.dataset.col;
+                block.innerText = crushGridData[r][c];
+            });
         }
     </script>
 </body>
