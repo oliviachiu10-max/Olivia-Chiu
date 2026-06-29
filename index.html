@@ -193,7 +193,6 @@
             "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"     // 蕭羽芯
         };
 
-        // 已成功換上妳提供的 12 張回憶照片網址！
         const sharedPhotos = [
             "https://i.postimg.cc/HnWhvNgg/retro-6C372E28-0D8F-4C8B-8B2A-50F864ACF32A.jpg",
             "https://i.postimg.cc/2SLXtvPz/IMG-5833.jpg",
@@ -206,8 +205,9 @@
             "https://i.postimg.cc/K83sWLdF/IMG-3898.jpg",
             "https://i.postimg.cc/4xHF0trs/original-2026-06-02-16033183705B694CD3.jpg",
             "https://i.postimg.cc/T35HsmZx/retro-9F9D4EA1-2588-4834-89B2-A0C9118974DD.jpg",
-            "https://i.postimg.cc/2SLXtvPz/IMG-5833.jpg" // 補齊第12張
+            "https://i.postimg.cc/2SLXtvPz/IMG-5833.jpg"
         ];
+
 
         let currentUser = "";
         let savedImageSrc = "";
@@ -514,15 +514,15 @@
             document.getElementById("bonus-score").innerText = bonusScore;
 
             if (currentUser === "chrieodncg") {
-                document.getElementById("bonus-title").innerText = "🎹 羿蓁的鋼琴別踩白塊兒 🎹";
+                document.getElementById("bonus-title").innerText = "🎹 鋼琴別踩白塊兒 🎹";
                 document.getElementById("bonus-desc").innerText = "點擊畫面中掉落下來的黑色鋼琴磚，集滿 5 次完美彈奏！";
                 initPianoGame();
             } else if (currentUser === "dbdithrbtk") {
-                document.getElementById("bonus-title").innerText = "💍 靖妤的璀璨鑽石接接樂 💍";
+                document.getElementById("bonus-title").innerText = "💍 手作十克拉璀璨鑽石接接樂 💍";
                 document.getElementById("bonus-desc").innerText = "移動滑鼠或滑動手指，用托盤接住 5 顆掉落的閃亮鑽石！";
                 initDiamondGame();
             } else if (currentUser === "guvpwnwguq") {
-                document.getElementById("bonus-title").innerText = "🧧 羽芯的幸運紅包大亂抓 🧧";
+                document.getElementById("bonus-title").innerText = "🧧 一百萬幸運紅包大亂抓 🧧";
                 document.getElementById("bonus-desc").innerText = "紅包在到處亂飛！快在畫面上點擊抓到它 5 次！";
                 initRedEnvelopeGame();
             }
