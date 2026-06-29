@@ -15,6 +15,7 @@
             align-items: center; 
             margin: 0; 
             padding: 20px; 
+            user-select: none;
         }
         
         .card { 
@@ -66,7 +67,7 @@
         #catchCanvas { background: #eef5f9; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
         /* 第二關：跳跳羊 */
-        #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
+        #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
         /* 第三關：真假羊羊 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 300px; }
@@ -96,7 +97,6 @@
 </head>
 <body>
 
-    <!-- 驗證身分 -->
     <div class="card" id="login-card">
         <h2 style="color: #333; margin-bottom: 20px;">身分認證系統 🌟</h2>
         <div style="margin-bottom: 20px; background: rgba(255,192,203,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,64,129,0.2);">
@@ -113,29 +113,26 @@
         <div class="error-message" id="error-message"></div>
     </div>
 
-    <!-- 第一關 -->
     <div class="card hidden" id="catch-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：大胃羊</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個綠色蔬菜！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">移動滑鼠或觸控滑動，幫羊羊接住 5 個綠色蔬菜！</p>
         <div class="score-board">已吃到健康蔬菜: <span id="catch-score">0</span> / 5</div>
         <canvas id="catchCanvas" width="320" height="250"></canvas>
     </div>
 
-    <!-- 第二關 -->
     <div class="card hidden" id="dino-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第二關：跳跳羊 🌵</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">按【空白鍵】或【點擊畫布】讓小羊跳過仙人掌！</p>
         <div class="score-board">目前分數: <span id="score">0</span> / 200</div>
         <canvas id="gameCanvas" width="400" height="150"></canvas>
         <button id="restart-btn" onclick="resetGame()" style="margin-top: 15px; background: #666; display: none;">重新開始</button>
     </div>
 
-    <!-- 第三關 -->
     <div class="card hidden" id="memory-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🧩 第三關：真假羊羊 🧩</h2>
         <div class="grid" id="texture-grid"></div>
     </div>
 
-    <!-- 第四關 -->
     <div class="card hidden" id="quiz-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🚧 第四關：抓癢還是抓羊 🚧</h2>
         <div class="score-board">完美點擊: <span id="rhythm-score">0</span> / 5</div>
@@ -144,7 +141,6 @@
         <div id="rhythm-feedback" style="font-weight: bold; height: 20px; color: #ff4081;"></div>
     </div>
 
-    <!-- 第五關 -->
     <div class="card hidden" id="rps-stage">
         <h2 style="color: #333; margin-bottom: 5px;">👊 第五關：羊羊拳 🖐️</h2>
         <div style="font-size: 50px; margin: 20px 0;" id="rps-status">🐑 VS ❓</div>
@@ -156,7 +152,6 @@
         </div>
     </div>
 
-    <!-- 感言短文頁面 -->
     <div class="card hidden" id="main-content">
         <div class="brand-header"><h2>🎉 認證成功 羊羊您好 🐏 🎉</h2></div>
         <div class="letter-section">
@@ -169,13 +164,11 @@
         <button onclick="goToBattleStage()" style="background: #e6b422; color: #1a1a1a; font-size: 18px; padding: 15px;">🔍 了解更多 (進入狂點對戰模式) 💥</button>
     </div>
 
-    <!-- 💥 狂點PK對戰賽區 -->
     <div class="card hidden" id="battle-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🔥 羊羊家族狂點極限 PK 賽 🔥</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 15px;">倒數結束前瘋狂猛敲妳的專屬圖案！只有第一名能拿到獎狀，輸的人退回第一關！</p>
         <div style="font-size: 24px; font-weight: bold; color: #ff4d4f; margin-bottom: 15px;">⏱️ 剩餘時間: <span id="timer-count">10</span> 秒</div>
         
-        <!-- 三人賽道 -->
         <div class="battle-lane lane-yi">
             <div class="battle-name">🎹 陳羿蓁 (鋼琴) ： <span id="score-yi">0</span> 下</div>
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-yi"></div></div>
@@ -189,12 +182,10 @@
             <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hsiao"></div></div>
         </div>
 
-        <!-- 巨型點擊鈕 -->
         <button class="mash-btn" id="mash-hit-button" onclick="handleMashClick()">🎹</button>
         <p style="font-size: 13px; color: #888; margin-top: 10px;">用力瘋狂猛點這個按鈕！！</p>
     </div>
 
-    <!-- 🏆 終極大結局獎狀展示（無相簿牆版） -->
     <div class="card hidden" id="final-stage">
         <div class="award-section">
             <h2 style="color: #203a43; margin-bottom: 5px;">👑 恭喜獲得 PK 大賽總冠軍！ 👑</h2>
@@ -250,11 +241,18 @@
         function initCatchGame() {
             catchScore = 0; sheepX = 140; items = [];
             document.getElementById("catch-score").innerText = catchScore;
-            cCanvas.addEventListener("mousemove", (e) => {
+            
+            // 監聽滑鼠與觸控移動
+            const moveHandler = (e) => {
                 const rect = cCanvas.getBoundingClientRect();
-                sheepX = e.clientX - rect.left - 20;
-                if(sheepX < 0) sheepX = 0; if(sheepX > 280) sheepX = 280;
-            });
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                sheepX = clientX - rect.left - 20;
+                if(sheepX < 0) sheepX = 0; 
+                if(sheepX > 280) sheepX = 280;
+            };
+            cCanvas.addEventListener("mousemove", moveHandler);
+            cCanvas.addEventListener("touchmove", moveHandler, { passive: true });
+            
             catchGameLoop();
         }
 
@@ -286,40 +284,73 @@
             catchGameId = requestAnimationFrame(catchGameLoop);
         }
 
-        // --- 第二關：小恐龍跑酷 ---
+        // --- 第二關：小恐龍跑酷 (已優化手感與監聽 Bug) ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let dino, cacti, score, gameId, isGameOver, gameSpeed = 4;
+        let listenersBound = false; // 防止重複綁定事件開關
 
         function initGame() {
-            dino = { x: 30, y: 115, width: 26, height: 26, vy: 0, gravity: 0.6, jumpForce: -10, isGrounded: true };
+            // 優化後的物理常數：重力 0.7，跳躍力 -11.5，落地更流暢乾脆
+            dino = { x: 30, y: 115, width: 24, height: 24, vy: 0, gravity: 0.7, jumpForce: -11.5, isGrounded: true };
             cacti = []; score = 0; isGameOver = false; gameSpeed = 4;
             document.getElementById("restart-btn").style.display = "none";
             document.getElementById("score").innerText = score;
-            window.addEventListener("keydown", handleJump);
+            
+            // 確保監聽器只會在一開始綁定一次，防止重複事件疊加產生 Bug
+            if (!listenersBound) {
+                window.addEventListener("keydown", handleJump);
+                canvas.addEventListener("mousedown", handleJump);
+                canvas.addEventListener("touchstart", handleJump, { passive: true });
+                listenersBound = true;
+            }
             gameLoop();
         }
+        
         function handleJump(e) {
-            if (e.code === "Space" || e.type === "touchstart" || e.type === "mousedown") {
-                if (dino.isGrounded && !isGameOver) { dino.vy = dino.jumpForce; dino.isGrounded = false; }
+            if (isGameOver) return;
+            if (e.type === "mousedown" || e.type === "touchstart" || (e.type === "keydown" && e.code === "Space")) {
+                if (dino.isGrounded) { 
+                    dino.vy = dino.jumpForce; 
+                    dino.isGrounded = false; 
+                }
                 if(e.code === "Space") e.preventDefault();
             }
         }
+        
         function gameLoop() {
             if (isGameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製地板線
             ctx.strokeStyle = "#bbb"; ctx.beginPath(); ctx.moveTo(0, 142); ctx.lineTo(canvas.width, 142); ctx.stroke();
+            
+            // 物理運動更新
             dino.vy += dino.gravity; dino.y += dino.vy;
             if (dino.y >= 115) { dino.y = 115; dino.vy = 0; dino.isGrounded = true; }
+            
             ctx.font = "26px sans-serif"; ctx.fillText("🐑", dino.x, dino.y);
-            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 160 + Math.random() * 120) {
-                cacti.push({ x: canvas.width, y: 115, width: 22, height: 26 });
+            
+            // 生成隨機仙人掌
+            if (cacti.length === 0 || canvas.width - cacti[cacti.length - 1].x > 180 + Math.random() * 120) {
+                cacti.push({ x: canvas.width, y: 115, width: 20, height: 24 });
             }
+            
             for (let i = cacti.length - 1; i >= 0; i--) {
                 cacti[i].x -= gameSpeed; ctx.fillText("🌵", cacti[i].x, cacti[i].y);
-                if (dino.x + 4 < cacti[i].x + cacti[i].width && dino.x + dino.width - 4 > cacti[i].x && dino.y + 4 < cacti[i].y + cacti[i].height && dino.y + dino.height - 4 > cacti[i].y) {
-                    isGameOver = true; document.getElementById("restart-btn").style.display = "block"; return;
+                
+                // 擴大碰撞箱寬容度 (前後內縮 6px 避免空氣牆死掉)
+                let dLeft = dino.x + 6;
+                let dRight = dino.x + dino.width - 6;
+                let cLeft = cacti[i].x + 4;
+                let cRight = cacti[i].x + cacti[i].width - 4;
+                
+                if (dLeft < cRight && dRight > cLeft && dino.y + 4 < cacti[i].y + cacti[i].height) {
+                    isGameOver = true; 
+                    document.getElementById("restart-btn").style.display = "block"; 
+                    return;
                 }
+                
                 if (cacti[i].x + cacti[i].width < 0) {
                     cacti.splice(i, 1); score += 20;
                     document.getElementById("score").innerText = score;
@@ -436,6 +467,7 @@
             updateBattleUI();
 
             // 啟動對手自動模擬點擊速度
+            if(aiInterval) clearInterval(aiInterval);
             aiInterval = setInterval(() => {
                 if (loginUser !== "chrieodncg") scores.yi += Math.floor(Math.random() * 4);
                 if (loginUser !== "dbdithrbtk") scores.peng += Math.floor(Math.random() * 4);
@@ -444,6 +476,7 @@
             }, 120);
 
             // 10秒計時器
+            if(battleTimer) clearInterval(battleTimer);
             battleTimer = setInterval(() => {
                 timeLeft--;
                 document.getElementById("timer-count").innerText = timeLeft;
