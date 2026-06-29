@@ -33,8 +33,7 @@
         #memory-stage.card { max-width: 450px; }
         #quiz-stage.card { max-width: 450px; }
         #rps-stage.card { max-width: 450px; }
-        #bonus-stage.card { max-width: 450px; transition: max-width 0.5s; }
-        #bonus-stage.card.reveal-ending { max-width: 750px; } /* 結局時拓寬卡片展示獎狀 */
+        #main-content.card { max-width: 750px; }
         
         .brand-header h2 { margin: 0 0 20px 0; color: #203a43; letter-spacing: 2px; text-align: center; }
         
@@ -61,35 +60,28 @@
 
         .score-board { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
         
-        /* 第一關 */
+        /* 第一關：大胃羊 */
         #catchCanvas { background: #eef5f9; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; cursor: pointer; }
 
-        /* 第二關 */
+        /* 第二關：跳跳羊 */
         #gameCanvas { background: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第三關 */
+        /* 第三關：真假羊羊 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 300px; }
         .grid-card { height: 90px; background: #203a43; border-radius: 8px; font-size: 36px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; transition: background 0.3s, transform 0.2s; color: transparent; }
         .grid-card.flipped { background: #fff; border: 2px solid #203a43; color: initial; transform: rotateY(180deg); }
         .grid-card.matched { background: #e6b422; border: 2px solid #e6b422; color: initial; cursor: default; }
 
-        /* 第四關 */
+        /* 第四關：抓癢還是抓羊 */
         #rhythmCanvas { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; display: block; margin: 15px auto; max-width: 100%; }
 
-        /* 第五關 */
+        /* 第五關：羊羊拳 */
         .rps-btn { font-size: 40px; background: white; border: 2px solid #203a43; border-radius: 50%; width: 80px; height: 80px; cursor: pointer; margin: 10px; transition: 0.2s; }
         .rps-btn:hover { transform: scale(1.1); background: #eef5f9; }
-
-        /* 彩蛋 Candy Crush 樣式 */
-        .crush-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px auto; max-width: 280px; background: #eef5f9; padding: 10px; border-radius: 12px; border: 2px solid #203a43; }
-        .crush-block { height: 60px; background: white; border-radius: 8px; font-size: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; user-select: none; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.1s; }
-        .crush-block:active { transform: scale(0.9); }
-        .crush-block.completed { background: #fffde7; border-color: #e6b422; cursor: default; }
     </style>
 </head>
 <body>
 
-    <!-- 登入卡片 -->
     <div class="card" id="login-card">
         <h2 style="color: #333; margin-bottom: 20px;">身分認證系統 🌟</h2>
         <div style="margin-bottom: 20px; background: rgba(255,192,203,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,64,129,0.2);">
@@ -106,42 +98,41 @@
         <div class="error-message" id="error-message"></div>
     </div>
 
-    <!-- 第一關 -->
     <div class="card hidden" id="catch-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第一關：大胃羊</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">滑動滑鼠或點擊，幫羊羊接住 5 個綠色蔬菜！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">點擊兩側或滑動滑鼠，幫羊羊接住 5 個綠色蔬菜！</p>
+        <p style="color: #ff4d4f; font-size: 12px; margin-bottom: 10px;">⚠️ 注意：接到高熱量垃圾食物會扣分喔！</p>
         <div class="score-board">已吃到健康蔬菜: <span id="catch-score">0</span> / 5</div>
         <canvas id="catchCanvas" width="320" height="250"></canvas>
     </div>
 
-    <!-- 第二關 -->
     <div class="card hidden" id="dino-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🐏 第二關：跳跳羊 🌵</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">達到 <span style="color: #ff4081; font-weight: bold;">200 分</span> 解鎖下一關！</p>
         <div class="score-board">目前分數: <span id="score">0</span> / 200</div>
         <canvas id="gameCanvas" width="400" height="150"></canvas>
+        <p style="font-size: 13px; color: #888;">點擊畫面或按空白鍵可以讓小羊跳躍</p>
         <button id="restart-btn" onclick="resetGame()" style="margin-top: 15px; background: #666; display: none;">重新開始</button>
     </div>
 
-    <!-- 第三關 -->
     <div class="card hidden" id="memory-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🧩 第三關：真假羊羊 🧩</h2>
         <p style="color: #666; font-size: 14px; margin-bottom: 15px;">找出三對相同的圖案就能進入下一關！</p>
         <div class="grid" id="texture-grid"></div>
     </div>
 
-    <!-- 第四關 -->
     <div class="card hidden" id="quiz-stage">
         <h2 style="color: #333; margin-bottom: 5px;">🚧 第四關：抓癢還是抓羊 🚧</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">當羊羊🐑跑入滾入左側黃圈時，點擊按鈕或按空白鍵！</p>
         <div class="score-board">完美點擊: <span id="rhythm-score">0</span> / 5</div>
         <canvas id="rhythmCanvas" width="360" height="100"></canvas>
         <button id="rhythm-hit-btn" onclick="hitNote()" style="background: #e6b422; color: #1a1a1a; font-size: 18px;">🔥 就是現在！點擊！ 🔥</button>
         <div id="rhythm-feedback" style="font-weight: bold; height: 20px; color: #ff4081;"></div>
     </div>
 
-    <!-- 第五關 -->
     <div class="card hidden" id="rps-stage">
         <h2 style="color: #333; margin-bottom: 5px;">👊 第五關：羊羊拳 🖐️</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">跟關主小羊猜拳，贏了就能進入終極彩蛋關卡！</p>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">跟關主小羊猜拳，贏了就能抱走大獎！</p>
         <div style="font-size: 50px; margin: 20px 0;" id="rps-status">🐑 VS ❓</div>
         <div id="rps-result" style="font-weight: bold; color: #cd9b1d; margin-bottom: 15px;">準備好就出拳吧！</div>
         <div>
@@ -151,31 +142,16 @@
         </div>
     </div>
 
-    <!-- 終極 Candy Crush 彩蛋遊戲關卡（在此進行最後的遊戲，成功後「才」原地顯現告白短文與大獎狀） -->
-    <div class="card hidden" id="bonus-stage">
-        <!-- 消除方塊遊戲區 -->
-        <div id="bonus-game-play-area">
-            <h2 style="color: #333; margin-bottom: 5px;">🍬 終極彩蛋：羊羊方塊消消樂 🍬</h2>
-            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">點擊任何一個方塊，只要它<b>上下左右</b>有鄰近的相同圖案，就能一口氣消除它們！</p>
-            <div class="score-board">成功消除次數: <span id="bonus-score">0</span> / 5</div>
-            <div class="crush-grid" id="crush-grid"></div>
+    <div class="card hidden" id="main-content">
+        <div class="brand-header"><h2>🎉 認證成功 羊羊您好 🐏 🎉</h2></div>
+        <div class="letter-section">
+            <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
+            <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
+            <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，會想到我們一起做過的那些蠢事</div>
+            <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
+            <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
         </div>
-        
-        <!-- 當消消樂挑戰成功後，才在最底端亮出的「專屬終極大结局（短文 + 獎狀）」 -->
-        <div id="final-destination" class="hidden">
-            <div class="brand-header"><h2 style="color: #203a43; font-size: 26px;">🎉 終極通關！給妳的專屬回顧驚喜 🎉</h2></div>
-            <div class="letter-section">
-                <div class="fade-in">雖然我們每天都在鬥嘴 而且你們真的很奇怪 但我還是很喜歡跟你們一起玩耍</div>
-                <div class="fade-in delay-1">謝謝你們讓我原本平凡的高二變得很好玩</div>
-                <div class="fade-in delay-2">希望以後想到這一年，除了考試跟作業之外，會想到我們一起做過的那些蠢事</div>
-                <div class="fade-in delay-3">總之因為有你們 我的高二過得很多彩多姿 希望你們喜歡這個小驚喜 愛你們喔 ❤️</div>
-                <div class="fade-in delay-4" style="text-align: right; font-weight: bold; margin-top: 20px; color: #cd9b1d;">— 你們不要太感動 我做很久</div>
-            </div>
-            <div class="award-section">
-                <h3>🏆 您的羊羊專屬獎狀 🏆</h3>
-                <img id="bonus-final-image" src="">
-            </div>
-        </div>
+        <div class="award-section"><h3>🏆 您的羊羊專屬獎狀 🏆</h3><img id="award-image" src=""></div>
     </div>
 
     <audio id="bgm" src="https://files.catbox.moe/74tcjk.mp3" loop></audio>
@@ -183,14 +159,12 @@
 
     <script>
         const userData = {
-            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png", // 陳羿蓁
-            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",    // 彭靖妤
-            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"     // 蕭羽芯
+            "chrieodncg": "https://i.postimg.cc/HsM9Qc6k/image-png.png",
+            "dbdithrbtk": "https://i.postimg.cc/PqQ61prN/image.png",
+            "guvpwnwguq": "https://i.postimg.cc/4dFQ1zCx/image.png"
         };
 
-        let currentUser = "";
         let savedImageSrc = "";
-        let isBonusFinished = false;
 
         function handleLogin() {
             const errorDiv = document.getElementById("error-message");
@@ -202,8 +176,7 @@
 
             const val = document.getElementById("username").value.trim();
             if (userData[val]) {
-                currentUser = val;
-                savedImageSrc = userData[val]; // 在此牢牢儲存專屬獎狀連結，留待最後消消樂通關使用
+                savedImageSrc = userData[val];
                 document.getElementById("login-card").classList.add("hidden");
                 document.getElementById("catch-stage").classList.remove("hidden");
                 initCatchGame();
@@ -219,6 +192,8 @@
 
         function initCatchGame() {
             catchScore = 0; sheepX = 140; items = [];
+            document.getElementById("catch-score").innerText = catchScore;
+            
             cCanvas.addEventListener("mousemove", (e) => {
                 const rect = cCanvas.getBoundingClientRect();
                 sheepX = e.clientX - rect.left - 20;
@@ -229,6 +204,7 @@
                 const rect = cCanvas.getBoundingClientRect();
                 sheepX = e.touches[0].clientX - rect.left - 20;
             });
+
             catchGameLoop();
         }
 
@@ -379,28 +355,35 @@
             }
         }
 
-        // --- 第四關：羊羊節奏音樂核心 ---
+        // --- 全新第四關：羊羊節奏音樂核心 ---
         const rCanvas = document.getElementById("rhythmCanvas");
         const rCtx = rCanvas.getContext("2d");
         let rhythmScore, notes, rhythmGameId;
-        const targetX = 50;
+        const targetX = 50; // 判定圈圈的位置
 
         function initRhythmGame() {
             rhythmScore = 0; notes = [];
+            document.getElementById("rhythm-score").innerText = rhythmScore;
             document.getElementById("rhythm-feedback").innerText = "";
+            
+            // 監聽鍵盤空白鍵也能打擊
             window.addEventListener("keydown", handleRhythmKey);
             rhythmLoop();
         }
 
         function handleRhythmKey(e) {
-            if(e.code === "Space") { e.preventDefault(); hitNote(); }
+            if(e.code === "Space") {
+                e.preventDefault();
+                hitNote();
+            }
         }
 
         function hitNote() {
             let hitSuccess = false;
             for (let i = 0; i < notes.length; i++) {
+                // 計算音符與目標判定圈的距離
                 let distance = Math.abs(notes[i].x - targetX);
-                if (distance < 25) {
+                if (distance < 25) { // 進入判定範圍
                     hitSuccess = true;
                     notes.splice(i, 1);
                     rhythmScore++;
@@ -427,21 +410,34 @@
 
         function rhythmLoop() {
             rCtx.clearRect(0, 0, rCanvas.width, rCanvas.height);
-            rCtx.strokeStyle = "#e6b422"; rCtx.lineWidth = 3; rCtx.beginPath(); rCtx.arc(targetX, 50, 20, 0, Math.PI * 2); rCtx.stroke();
 
+            // 繪製判定線與外圈圈
+            rCtx.strokeStyle = "#e6b422";
+            rCtx.lineWidth = 3;
+            rCtx.beginPath();
+            rCtx.arc(targetX, 50, 20, 0, Math.PI * 2);
+            rCtx.stroke();
+
+            // 隨機產生向左滾動的星星音符
             if (Math.random() < 0.02 && (notes.length === 0 || rCanvas.width - notes[notes.length-1].x > 100)) {
                 notes.push({ x: rCanvas.width, y: 50 });
             }
 
-            rCtx.font = "24px sans-serif"; rCtx.textBaseline = "middle";
+            // 移動並繪製音符
+            rCtx.font = "24px sans-serif";
+            rCtx.textBaseline = "middle";
             for (let i = notes.length - 1; i >= 0; i--) {
-                notes[i].x -= 3; rCtx.fillText("🐑", notes[i].x - 12, notes[i].y);
+                notes[i].x -= 3; // 移动速度
+                rCtx.fillText("🐑", notes[i].x - 12, notes[i].y);
+
+                // 超出邊界代表漏掉
                 if (notes[i].x < 10) {
                     notes.splice(i, 1);
                     document.getElementById("rhythm-feedback").innerText = "❌ MISS! ❌";
                     document.getElementById("rhythm-feedback").style.color = "#ff4d4f";
                 }
             }
+
             rhythmGameId = requestAnimationFrame(rhythmLoop);
         }
 
@@ -459,124 +455,18 @@
                 (playerChoice === "✌️" && sheepChoice === "🖐️")
             ) {
                 document.getElementById("rps-result").innerText = "🎉 妳贏了！小羊心服口服！";
-                setTimeout(goToBonusStage, 1000);
+                setTimeout(successUnlock, 1000);
             } else {
                 document.getElementById("rps-result").innerText = "💥 妳輸了！小羊得意地咩咩笑，重新出拳！";
             }
         }
 
-        // 猜拳贏了直接切換到消消樂彩蛋遊戲
-        function goToBonusStage() {
+        function successUnlock() {
+            document.getElementById("award-image").src = savedImageSrc;
             document.getElementById("rps-stage").classList.add("hidden");
-            document.getElementById("bonus-stage").classList.remove("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
             document.getElementById("bgm").play().catch(err => console.log(err));
-            bonusScore = 0;
-            isBonusFinished = false;
-            document.getElementById("bonus-score").innerText = bonusScore;
-            generateCrushGrid();
-        }
-
-        // --- 終極彩蛋：Candy Crush 消消樂核心 ---
-        const crushIcons = ["🎹", "💍", "🧧", "🐏"];
-        let crushGridSize = 4;
-        let crushGridData = [];
-        let bonusScore = 0;
-
-        function generateCrushGrid() {
-            const gridEl = document.getElementById("crush-grid");
-            gridEl.innerHTML = "";
-            crushGridData = [];
-            
-            for (let r = 0; r < crushGridSize; r++) {
-                crushGridData[r] = [];
-                for (let c = 0; c < crushGridSize; c++) {
-                    const randomIcon = crushIcons[Math.floor(Math.random() * crushIcons.length)];
-                    crushGridData[r][c] = randomIcon;
-
-                    const block = document.createElement("div");
-                    block.classList.add("crush-block");
-                    block.innerText = randomIcon;
-                    block.dataset.row = r;
-                    block.dataset.col = c;
-                    block.addEventListener("click", handleBlockClick);
-                    gridEl.appendChild(block);
-                }
-            }
-        }
-
-        function handleBlockClick() {
-            if (isBonusFinished) return;
-
-            const row = parseInt(this.dataset.row);
-            const col = parseInt(this.dataset.col);
-            const targetIcon = crushGridData[row][col];
-
-            let matches = [];
-            let queue = [{r: row, c: col}];
-            let visited = Array(crushGridSize).fill().map(() => Array(crushGridSize).fill(false));
-            visited[row][col] = true;
-
-            const dr = [-1, 1, 0, 0];
-            const dc = [0, 0, -1, 1];
-
-            while(queue.length > 0) {
-                let curr = queue.shift();
-                matches.push(curr);
-
-                for(let i=0; i<4; i++) {
-                    let nr = curr.r + dr[i];
-                    let nc = curr.c + dc[i];
-
-                    if(nr >= 0 && nr < crushGridSize && nc >= 0 && nc < crushGridSize) {
-                        if(!visited[nr][nc] && crushGridData[nr][nc] === targetIcon) {
-                            visited[nr][nc] = true;
-                            queue.push({r: nr, c: nc});
-                        }
-                    }
-                }
-            }
-
-            if (matches.length >= 2) {
-                bonusScore++;
-                document.getElementById("bonus-score").innerText = bonusScore;
-
-                matches.forEach(pos => {
-                    crushGridData[pos.r][pos.c] = crushIcons[Math.floor(Math.random() * crushIcons.length)];
-                });
-
-                renderCrushGrid();
-
-                // 🌟 當消消樂消除滿 5 次，代表遊戲全部大通關，此時才原地亮出驚喜！
-                if (bonusScore >= 5) {
-                    isBonusFinished = true;
-                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                    
-                    // 1. 將消消樂格子全部鋪滿慶祝圖案
-                    const blocks = document.querySelectorAll(".crush-block");
-                    blocks.forEach(block => {
-                        block.innerText = "🎉";
-                        block.classList.add("completed");
-                    });
-
-                    // 2. 拓寬卡片元件寬度，以便完美裝下大獎狀
-                    document.getElementById("bonus-stage").classList.add("reveal-ending");
-
-                    // 3. 原地灌入對應使用者的永久專屬大獎狀連結
-                    document.getElementById("bonus-final-image").src = savedImageSrc;
-                    
-                    // 4. 原地華麗地亮出最终藏匿的感動短文與大獎狀
-                    document.getElementById("final-destination").classList.remove("hidden");
-                }
-            }
-        }
-
-        function renderCrushGrid() {
-            const blocks = document.querySelectorAll(".crush-block");
-            blocks.forEach(block => {
-                const r = block.dataset.row;
-                const c = block.dataset.col;
-                block.innerText = crushGridData[r][c];
-            });
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
     </script>
 </body>
